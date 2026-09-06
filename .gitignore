@@ -33,8 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# claude
+# local working docs (not checked in)
 CLAUDE.md
+PLAN.md
+wireframe.excalidraw
 
 # vercel
 .vercel
