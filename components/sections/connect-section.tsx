@@ -1,35 +1,39 @@
-import { Section } from "@/components/sections/section";
-import { Eyebrow } from "@/components/sections/eyebrow";
+import { Section, SectionLabel } from "@/components/sections/section";
 import { ContactForm } from "@/components/sections/contact-form";
 import type { Tables } from "@/lib/supabase/database.types";
 
 export function ConnectSection({ socialLinks }: { socialLinks: Tables<"social_links">[] }) {
   return (
     <Section id="connect" label="Connect">
-      <Eyebrow>Connect</Eyebrow>
-      <h2 className="text-h1 font-semibold text-balance text-foreground">Let&rsquo;s talk</h2>
-      <p className="mt-4 max-w-prose text-body text-muted-foreground text-pretty">
-        Have a project in mind, or just want to say hi? Send a message below.
-      </p>
+      <SectionLabel>Connect</SectionLabel>
 
-      <ContactForm />
+      <div className="grid grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+        <div>
+          <p className="max-w-lg font-display text-h1 font-medium text-balance uppercase">
+            Have something in mind? Send it over.
+          </p>
 
-      {socialLinks.length > 0 ? (
-        <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-2 border-t border-border pt-6">
-          {socialLinks.map((link) => (
-            <li key={link.id}>
-              <a
-                href={link.url}
-                target={link.url.startsWith("mailto:") ? undefined : "_blank"}
-                rel={link.url.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                className="font-mono text-meta text-muted-foreground uppercase hover:text-accent-readable focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              >
-                {link.platform}
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+          {socialLinks.length > 0 ? (
+            <ul className="mt-12 flex flex-col">
+              {socialLinks.map((link) => (
+                <li key={link.id} className="border-b border-border first:border-t">
+                  <a
+                    href={link.url}
+                    target={link.url.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={link.url.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                    className="flex items-baseline justify-between gap-4 py-3 font-mono text-meta text-muted-foreground uppercase transition-colors duration-200 ease-apple hover:text-accent-ink"
+                  >
+                    {link.platform}
+                    <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+
+        <ContactForm />
+      </div>
     </Section>
   );
 }

@@ -1,199 +1,172 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Palette — three colours per mode, nothing else.
+
+     light : white        / black / neon purple
+     dark  : jet black    / white / neon pink
+
+   Every other surface value (muted text, hairlines, the translucent sidebar)
+   is *derived* from those three with color-mix, so no fourth colour can creep
+   in. There are no gradients anywhere in this stylesheet by design.
+--------------------------------------------------------------------------- */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0 0 0);
+
+  /* Neon purple. --accent is the full-saturation neon, for display type,
+     hairline accents and hover states. --accent-ink is the same hue darkened
+     just enough to clear AA on small text against white. */
+  --accent: oklch(0.58 0.3 302);
+  --accent-ink: oklch(0.45 0.27 302);
+}
+
+.dark {
+  --background: oklch(0.07 0 0);
+  --foreground: oklch(1 0 0);
+
+  /* Neon pink on jet black clears AA at any size, so the two converge. */
+  --accent: oklch(0.7 0.26 353);
+  --accent-ink: oklch(0.7 0.26 353);
+}
+
+:root,
+.dark {
+  --muted-foreground: color-mix(in oklab, var(--foreground) 52%, var(--background));
+  --border: color-mix(in oklab, var(--foreground) 14%, var(--background));
+  --ring: var(--accent);
+
+  /* The sidebar is the ground, made translucent — glass over whatever it
+     floats on, never a differently-coloured panel. */
+  --sidebar: color-mix(in srgb, var(--background) 62%, transparent);
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-sidebar: var(--sidebar);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-jetbrains-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-accent-readable: var(--accent-readable);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --font-display: var(--font-outfit);
 
-  /* Type scale — fluid, clamp()-based. Display/heading ride the sans face
-     with tight negative tracking (brutalist scale); meta rides mono. */
-  --text-display: clamp(2.75rem, 2rem + 3.2vw, 5.5rem);
-  --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.03em;
-  --text-h1: clamp(2rem, 1.6rem + 1.8vw, 3.25rem);
-  --text-h1--line-height: 1.05;
-  --text-h1--letter-spacing: -0.025em;
-  --text-h2: clamp(1.5rem, 1.3rem + 0.9vw, 2.25rem);
-  --text-h2--line-height: 1.1;
-  --text-h2--letter-spacing: -0.02em;
-  --text-h3: clamp(1.15rem, 1.05rem + 0.4vw, 1.5rem);
-  --text-h3--line-height: 1.2;
-  --text-h3--letter-spacing: -0.01em;
+  /* Type scale. Display sizes run large with tight negative tracking; the
+     mono meta size is small, uppercase and widely tracked. Those two
+     registers carry the whole design — there is no third voice. */
+  --text-display: clamp(2.75rem, 1.2rem + 6.2vw, 6.5rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.045em;
+  --text-h1: clamp(2.25rem, 1.4rem + 3.4vw, 4.5rem);
+  --text-h1--line-height: 0.94;
+  --text-h1--letter-spacing: -0.04em;
+  --text-h2: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h3: clamp(1.05rem, 0.98rem + 0.3vw, 1.3rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.02em;
   --text-body: 1rem;
-  --text-body--line-height: 1.65;
-  --text-meta: 0.8125rem;
+  --text-body--line-height: 1.6;
+  --text-meta: 0.6875rem;
   --text-meta--line-height: 1.4;
-  --text-meta--letter-spacing: 0.05em;
+  --text-meta--letter-spacing: 0.14em;
 
-  /* Apple-style easing — nothing linear, nothing bouncy. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
   --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-apple-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-apple-in-out: cubic-bezier(0.83, 0, 0.17, 1);
 }
 
-:root {
-  /* Light: off-white ground (not pure white) so the translucent glass
-     sidebar has something to visibly refract against. */
-  --background: oklch(0.984 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.984 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-
-  /* Neon purple. Full-saturation --accent is ~3.5:1 on this background and
-     fails AA for text — reserve it for large text, borders, glows, focus
-     rings. --accent-readable is a darkened variant for small text/links. */
-  --accent: oklch(0.55 0.27 302);
-  --accent-readable: oklch(0.4 0.22 303);
-  --accent-foreground: oklch(0.984 0 0);
-
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.145 0 0 / 10%);
-  --input: oklch(0.145 0 0 / 12%);
-  --ring: oklch(0.55 0.27 302 / 50%);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 1rem;
-
-  --sidebar: oklch(1 0 0 / 55%);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.145 0 0);
-  --sidebar-primary-foreground: oklch(0.984 0 0);
-  --sidebar-accent: oklch(0.145 0 0 / 6%);
-  --sidebar-accent-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.145 0 0 / 10%);
-  --sidebar-ring: oklch(0.55 0.27 302 / 50%);
-}
-
-.dark {
-  /* Jet black, not shadcn's default near-black. */
-  --background: oklch(0.09 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.13 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.13 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.09 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.18 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-
-  /* Neon pink. Full-saturation clears AA comfortably on jet black, so the
-     two accent tokens converge in dark mode. */
-  --accent: oklch(0.68 0.26 353);
-  --accent-readable: oklch(0.68 0.26 353);
-  --accent-foreground: oklch(0.09 0 0);
-
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.68 0.26 353 / 50%);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-
-  --sidebar: oklch(0.16 0 0 / 45%);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.68 0.26 353);
-  --sidebar-primary-foreground: oklch(0.09 0 0);
-  --sidebar-accent: oklch(1 0 0 / 6%);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.68 0.26 353 / 50%);
-}
-
-/* z-index scale — one source of truth so the sidebar/footer overlap
-   (sidebar floats above the footer gradient) never gets re-litigated
-   per-component. */
+/* Layout constants. The z-scale is one source of truth so the sidebar /
+   top-bar / content stacking never gets re-litigated per component. */
 :root {
   --z-base: 0;
-  --z-footer: 10;
   --z-content: 20;
   --z-sidebar: 30;
   --z-overlay: 40;
   --z-modal: 50;
 
-  /* Wireframe measures the sidebar at 24.8% of a 1440px-ish laptop viewport
-     (~356px). clamp() keeps that proportion at laptop widths without
-     ballooning on an ultrawide or crushing below readable. */
-  --sidebar-width: clamp(17.5rem, 24vw, 23.75rem);
-  --sidebar-width-collapsed: 4.5rem;
+  --sidebar-width: clamp(13rem, 16vw, 15.5rem);
+  --sidebar-width-collapsed: 4rem;
 
-  /* Tracks the sidebar's *current* rendered width (expanded or collapsed).
-     SidebarPanel keeps this in sync on the client; anything laid out
-     relative to the sidebar (main content padding, the copyright line)
-     reads this instead of duplicating the collapse logic. */
+  /* Tracks the sidebar's *current* rendered width. Anything laid out
+     relative to the sidebar (content padding, the copyright line) reads
+     this rather than duplicating the collapse logic. */
   --sidebar-offset: var(--sidebar-width);
+
+  /* Gutter shared by the sidebar's outer margin and the content columns, so
+     everything lands on the same vertical rhythm. */
+  --gutter: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+/* A blocking inline script (app/layout.tsx) sets this attribute from
+   localStorage before hydration, so a returning visitor's collapsed
+   preference is correct on the very first paint — no post-load reflow. */
+:root[data-sidebar-collapsed="true"] {
+  --sidebar-offset: var(--sidebar-width-collapsed);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
+
   html {
-    @apply font-sans;
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     color-scheme: light;
+    /* Native document scroll-snap. `proximity`, not `mandatory` — mandatory
+       snap on an unbounded-height section (Projects, Experience) traps the
+       user mid-list. */
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
+
   html.dark {
     color-scheme: dark;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--background);
+  }
+
+  a,
+  button {
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

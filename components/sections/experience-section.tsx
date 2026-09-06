@@ -1,5 +1,4 @@
-import { Section } from "@/components/sections/section";
-import { Eyebrow } from "@/components/sections/eyebrow";
+import { Section, SectionLabel } from "@/components/sections/section";
 import type { Tables } from "@/lib/supabase/database.types";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" });
@@ -14,30 +13,33 @@ function formatRange(startDate: string, endDate: string | null, isCurrent: boole
 export function ExperienceSection({ experiences }: { experiences: Tables<"experiences">[] }) {
   return (
     <Section id="experience" label="Experience">
-      <Eyebrow>Experience</Eyebrow>
-      <h2 className="text-h1 font-semibold text-balance text-foreground">Experience</h2>
+      <SectionLabel>Experience</SectionLabel>
 
       {experiences.length === 0 ? (
-        <p className="mt-8 text-body text-muted-foreground">Experience coming soon.</p>
+        <p className="text-body text-muted-foreground">Experience coming soon.</p>
       ) : (
-        <ul className="mt-10 flex flex-col gap-8">
+        <ul className="flex flex-col">
           {experiences.map((experience) => (
             <li
               key={experience.id}
-              className="grid grid-cols-1 gap-1 border-t border-border pt-6 first:border-t-0 first:pt-0 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6"
+              className="grid grid-cols-1 gap-x-8 gap-y-3 border-b border-border py-7 first:pt-0 last:border-b-0 sm:grid-cols-[11rem_minmax(0,1fr)]"
             >
-              <span className="font-mono text-meta text-muted-foreground tabular-nums">
-                {formatRange(experience.start_date, experience.end_date, experience.is_current)}
-              </span>
-              <div>
-                <h3 className="text-h3 font-semibold text-foreground">
-                  {experience.role} <span className="text-muted-foreground">— {experience.company}</span>
-                </h3>
+              <div className="flex flex-col gap-1">
+                <span className="font-mono text-meta text-muted-foreground tabular-nums">
+                  {formatRange(experience.start_date, experience.end_date, experience.is_current)}
+                </span>
                 {experience.location ? (
-                  <p className="mt-1 font-mono text-meta text-muted-foreground">{experience.location}</p>
+                  <span className="font-mono text-meta text-muted-foreground/70 uppercase">
+                    {experience.location}
+                  </span>
                 ) : null}
+              </div>
+
+              <div>
+                <h3 className="font-display text-h2 font-medium">{experience.role}</h3>
+                <p className="mt-1 font-mono text-meta text-accent uppercase">{experience.company}</p>
                 {experience.description ? (
-                  <p className="mt-3 max-w-prose text-body text-foreground/90 text-pretty">
+                  <p className="mt-4 max-w-prose text-body text-pretty text-muted-foreground">
                     {experience.description}
                   </p>
                 ) : null}

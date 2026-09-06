@@ -1,28 +1,27 @@
-import { Section } from "@/components/sections/section";
-import { Eyebrow } from "@/components/sections/eyebrow";
+import { Section, SectionLabel } from "@/components/sections/section";
 import type { Tables } from "@/lib/supabase/database.types";
 
 export function ProcessSection({ steps }: { steps: Tables<"process_steps">[] }) {
   return (
     <Section id="process" label="Process">
-      <Eyebrow>Process</Eyebrow>
-      <h2 className="text-h1 font-semibold text-balance text-foreground">Process</h2>
+      <SectionLabel>Process</SectionLabel>
 
       {steps.length === 0 ? (
-        <p className="mt-8 text-body text-muted-foreground">Process steps coming soon.</p>
+        <p className="text-body text-muted-foreground">Process steps coming soon.</p>
       ) : (
-        <ol className="mt-10 flex flex-col gap-8">
+        <ol className="flex flex-col">
           {steps.map((step, index) => (
-            <li key={step.id} className="flex gap-6 border-t border-border pt-6 first:border-t-0 first:pt-0">
-              <span className="font-mono text-meta text-muted-foreground tabular-nums">
+            <li
+              key={step.id}
+              className="grid grid-cols-[3rem_minmax(0,1fr)] items-start gap-x-6 gap-y-2 border-b border-border py-7 first:pt-0 last:border-b-0 sm:grid-cols-[5rem_minmax(0,22rem)_minmax(0,1fr)]"
+            >
+              <span className="font-mono text-meta text-accent tabular-nums">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <div>
-                <h3 className="text-h3 font-semibold text-foreground">{step.title}</h3>
-                <p className="mt-2 max-w-prose text-body text-muted-foreground text-pretty">
-                  {step.description}
-                </p>
-              </div>
+              <h3 className="font-display text-h2 font-medium">{step.title}</h3>
+              <p className="col-start-2 max-w-prose text-body text-pretty text-muted-foreground sm:col-start-3">
+                {step.description}
+              </p>
             </li>
           ))}
         </ol>

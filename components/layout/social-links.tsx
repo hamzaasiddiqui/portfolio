@@ -2,6 +2,8 @@ import { LinkedinLogo } from "@phosphor-icons/react/dist/ssr/LinkedinLogo";
 import { GithubLogo } from "@phosphor-icons/react/dist/ssr/GithubLogo";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr/EnvelopeSimple";
 import { Globe } from "@phosphor-icons/react/dist/ssr/Globe";
+import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
+import { ICON_BUTTON } from "@/components/layout/control-styles";
 import type { Tables } from "@/lib/supabase/database.types";
 
 const ICONS: Record<string, typeof LinkedinLogo> = {
@@ -15,31 +17,39 @@ export function SocialLinks({ links }: { links: Tables<"social_links">[] }) {
   if (links.length === 0) return null;
 
   return (
-    <div className="group/social relative flex size-9 items-center justify-end">
-      {/* Always-visible trigger. Real focusable element so keyboard users
-          land here and immediately satisfy :focus-within — no mouse
-          required to reach the links behind it. */}
+    // Hover/focus is pure CSS on this group, so the cluster stays a Server
+    // Component — no client bundle for what a `:hover` can do.
+    <div className="group/social relative size-8">
+      {/* Collapsed: a single glyph, rotating 45° into a close mark as the
+          column opens beneath it. It keeps pointer events while faded so the
+          hover target never disappears out from under the cursor. */}
       <button
         type="button"
         aria-label="Social links"
-        className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background/60 text-foreground shadow-sm backdrop-blur-md transition-opacity duration-200 ease-apple group-hover/social:opacity-0 group-focus-within/social:opacity-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className={`${ICON_BUTTON} absolute top-0 right-0 group-hover/social:rotate-45 group-hover/social:text-accent group-focus-within/social:rotate-45 group-focus-within/social:text-accent`}
       >
-        <Globe size={16} aria-hidden="true" />
+        <Plus size={16} aria-hidden="true" />
       </button>
 
-      <div className="pointer-events-none absolute right-0 flex items-center gap-1 rounded-full border border-border/60 bg-background/80 p-1 opacity-0 shadow-lg backdrop-blur-md transition-opacity duration-200 ease-apple group-hover/social:pointer-events-auto group-hover/social:opacity-100 group-focus-within/social:pointer-events-auto group-focus-within/social:opacity-100">
-        {links.map((link) => {
+      {/* Expanded: the links drop straight down from the trigger, one under
+          the other, each a bare glyph — no panel, card or overlay behind
+          them. Absolutely placed, so opening shifts nothing on the page. */}
+      <div className="absolute top-9 right-0 flex flex-col items-center gap-1">
+        {links.map((link, index) => {
           const Icon = ICONS[link.icon_name] ?? Globe;
+          const isMail = link.url.startsWith("mailto:");
+
           return (
             <a
               key={link.id}
               href={link.url}
-              target={link.url.startsWith("mailto:") ? undefined : "_blank"}
-              rel={link.url.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+              target={isMail ? undefined : "_blank"}
+              rel={isMail ? undefined : "noopener noreferrer"}
               aria-label={link.platform}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent/10 hover:text-accent-readable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              style={{ transitionDelay: `${index * 45}ms` }}
+              className={`${ICON_BUTTON} pointer-events-none -translate-y-2 opacity-0 transition-[color,transform,opacity] group-hover/social:pointer-events-auto group-hover/social:translate-y-0 group-hover/social:opacity-100 group-focus-within/social:pointer-events-auto group-focus-within/social:translate-y-0 group-focus-within/social:opacity-100`}
             >
-              <Icon size={16} weight="regular" aria-hidden="true" />
+              <Icon size={16} aria-hidden="true" />
             </a>
           );
         })}

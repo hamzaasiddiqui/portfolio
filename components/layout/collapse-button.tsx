@@ -1,8 +1,9 @@
 "use client";
 
-import { CaretLeft } from "@phosphor-icons/react/dist/csr/CaretLeft";
-import { CaretRight } from "@phosphor-icons/react/dist/csr/CaretRight";
+import { ArrowLineLeft } from "@phosphor-icons/react/dist/csr/ArrowLineLeft";
+import { ArrowLineRight } from "@phosphor-icons/react/dist/csr/ArrowLineRight";
 import { useSidebar } from "@/components/layout/sidebar-context";
+import { ICON_BUTTON } from "@/components/layout/control-styles";
 
 export function CollapseButton() {
   const { isCollapsed, toggleCollapsed } = useSidebar();
@@ -13,9 +14,9 @@ export function CollapseButton() {
       onClick={toggleCollapsed}
       aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       aria-expanded={!isCollapsed}
-      className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background text-foreground shadow-sm transition-colors hover:bg-accent/10 hover:text-accent-readable focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
+      className={ICON_BUTTON}
     >
-      {isCollapsed ? <CaretRight size={12} weight="bold" /> : <CaretLeft size={12} weight="bold" />}
+      {isCollapsed ? <ArrowLineRight size={15} /> : <ArrowLineLeft size={15} />}
     </button>
   );
 }

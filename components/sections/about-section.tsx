@@ -1,30 +1,30 @@
 import { Section } from "@/components/sections/section";
-import { Eyebrow } from "@/components/sections/eyebrow";
 import type { Tables } from "@/lib/supabase/database.types";
 
 export function AboutSection({ profile }: { profile: Tables<"profile"> }) {
   return (
     <Section id="about" label="About">
-      <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[minmax(0,28%)_minmax(0,1fr)]">
-        {/* 3D robot slot — ticket 3 mounts the R3F canvas here, prominent
-            and mouse-interactive only while this section is active. */}
-        <div
-          aria-hidden="true"
-          className="aspect-square w-full rounded-3xl border border-dashed border-border/60 bg-muted/30"
-        />
+      <div className="grid grid-cols-1 items-center gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,30%)_minmax(0,1fr)]">
+        {/* Ticket 3 mounts the R3F canvas here — prominent and mouse-
+            interactive while About is the active section, ambient elsewhere.
+            Deliberately unstyled: it reserves square space in the grid and
+            nothing more, so the 3D model arrives without a frame to fight. */}
+        <div id="robot-slot" aria-hidden="true" className="aspect-square w-full" />
 
         <div>
-          <Eyebrow>About</Eyebrow>
-          <h1 className="text-display font-semibold text-balance text-foreground">
-            {profile.name}
-          </h1>
+          {/* The name lives permanently in the sidebar, so the page's one
+              <h1> is the tagline. */}
           {profile.tagline ? (
-            <p className="mt-4 text-h3 text-muted-foreground text-pretty">{profile.tagline}</p>
+            <h1 className="font-display text-display font-medium text-balance uppercase">{profile.tagline}</h1>
           ) : null}
+
           {profile.about_text ? (
-            <p className="mt-8 max-w-prose text-body text-foreground/90 text-pretty whitespace-pre-line">
-              {profile.about_text}
-            </p>
+            <div className="mt-12 max-w-md border-t border-border pt-5">
+              <p className="mb-3 font-mono text-meta text-muted-foreground uppercase">About</p>
+              <p className="text-body text-pretty whitespace-pre-line text-muted-foreground">
+                {profile.about_text}
+              </p>
+            </div>
           ) : null}
         </div>
       </div>

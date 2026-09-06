@@ -1,5 +1,4 @@
-import { Section } from "@/components/sections/section";
-import { Eyebrow } from "@/components/sections/eyebrow";
+import { Section, SectionLabel } from "@/components/sections/section";
 import type { Tables } from "@/lib/supabase/database.types";
 
 function groupByCategory(skills: Tables<"skills">[]) {
@@ -17,20 +16,22 @@ export function SkillsSection({ skills }: { skills: Tables<"skills">[] }) {
 
   return (
     <Section id="skills" label="Skills">
-      <Eyebrow>Skills</Eyebrow>
-      <h2 className="text-h1 font-semibold text-balance text-foreground">Skills</h2>
+      <SectionLabel>Skills</SectionLabel>
 
       {groups.size === 0 ? (
-        <p className="mt-8 text-body text-muted-foreground">Skills coming soon.</p>
+        <p className="text-body text-muted-foreground">Skills coming soon.</p>
       ) : (
-        <div className="mt-10 grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-16 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from(groups.entries()).map(([category, items]) => (
             <div key={category}>
-              <h3 className="font-mono text-meta text-muted-foreground uppercase">{category}</h3>
-              <ul className="mt-3 flex flex-col gap-2">
+              <p className="font-mono text-meta text-muted-foreground uppercase">{category}</p>
+              <ul className="mt-4 flex flex-col">
                 {items.map((skill) => (
-                  <li key={skill.id} className="flex items-baseline justify-between gap-3 text-body text-foreground">
-                    <span className="truncate">{skill.name}</span>
+                  <li
+                    key={skill.id}
+                    className="flex items-baseline justify-between gap-4 border-b border-border py-3 last:border-b-0"
+                  >
+                    <span className="font-display text-h3 font-medium">{skill.name}</span>
                     {skill.level ? (
                       <span
                         className="shrink-0 font-mono text-meta text-muted-foreground tabular-nums"

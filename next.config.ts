@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Default position (bottom-left) sits exactly under the collapsed
+  // sidebar's control row and intercepted real clicks on it during dev.
+  devIndicators: false,
   images: {
     remotePatterns: [
       {

@@ -5,10 +5,12 @@ import { getProcessSteps } from "@/lib/queries/process-steps";
 import { getExperiences } from "@/lib/queries/experiences";
 import { getProjects } from "@/lib/queries/projects";
 import { getSocialLinks } from "@/lib/queries/social-links";
+import { ActiveSectionProvider } from "@/components/active-section-provider";
 import { Sidebar } from "@/components/layout/sidebar";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SocialLinks } from "@/components/layout/social-links";
-import { Footer, Copyright } from "@/components/layout/footer";
+import { SectionIndicator } from "@/components/layout/section-indicator";
+import { Copyright } from "@/components/layout/footer";
 import { AboutSection } from "@/components/sections/about-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 import { ProcessSection } from "@/components/sections/process-section";
@@ -50,35 +52,43 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="relative min-h-full">
-      <Sidebar name={profile.name} resumeUrl={profile.resume_url}>
-        <SidebarNav />
-      </Sidebar>
+    <ActiveSectionProvider>
+      <div className="relative min-h-full">
+        <Sidebar name={profile.name} resumeUrl={profile.resume_url}>
+          <SidebarNav />
+        </Sidebar>
 
-      <div
-        className="pointer-events-none fixed inset-x-0 top-0 z-(--z-content) flex justify-end p-6"
-        style={{ paddingLeft: "calc(var(--sidebar-offset) + 1.5rem)" }}
-      >
-        <div className="pointer-events-auto">
-          <SocialLinks links={socialLinks} />
+        {/* z-overlay, not z-content: these fixed controls sit at the same
+            visual top edge as <main>'s sections, and an equal z-index would
+            fall back to DOM order and let whichever section is scrolled into
+            view swallow clicks and hover meant for them. */}
+        <div
+          className="pointer-events-none fixed inset-x-0 top-0 z-(--z-overlay) flex items-start justify-end gap-6 p-(--gutter)"
+          style={{ paddingLeft: "calc(var(--sidebar-offset) + var(--gutter))" }}
+        >
+          <div className="pointer-events-auto">
+            <SectionIndicator />
+          </div>
+          <div className="pointer-events-auto">
+            <SocialLinks links={socialLinks} />
+          </div>
         </div>
+
+        <main
+          id="main-content"
+          className="relative z-(--z-content)"
+          style={{ paddingLeft: "calc(var(--sidebar-offset) + var(--gutter))" }}
+        >
+          <AboutSection profile={profile} />
+          <SkillsSection skills={skills} />
+          <ProcessSection steps={processSteps} />
+          <ExperienceSection experiences={experiences} />
+          <ProjectsSection projects={projects} />
+          <ConnectSection socialLinks={socialLinks} />
+        </main>
+
+        <Copyright />
       </div>
-
-      <main
-        id="main-content"
-        className="relative z-(--z-content)"
-        style={{ paddingLeft: "var(--sidebar-offset)" }}
-      >
-        <AboutSection profile={profile} />
-        <SkillsSection skills={skills} />
-        <ProcessSection steps={processSteps} />
-        <ExperienceSection experiences={experiences} />
-        <ProjectsSection projects={projects} />
-        <ConnectSection socialLinks={socialLinks} />
-      </main>
-
-      <Footer />
-      <Copyright />
-    </div>
+    </ActiveSectionProvider>
   );
 }
