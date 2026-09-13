@@ -112,7 +112,6 @@ export default async function Home() {
           <ConnectSection socialLinks={socialLinks} />
         </main>
 
-        <ModelCredit />
         <Copyright />
       </div>
     </ActiveSectionProvider>
