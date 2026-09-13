@@ -33,7 +33,7 @@ export function EducationSection({ education }: { education: Tables<"education">
                       href={entry.institution_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="transition-colors duration-200 ease-apple hover:text-accent-ink"
+                      className="underline decoration-accent/30 decoration-1 underline-offset-[6px] transition-colors duration-200 ease-apple hover:text-accent-ink hover:decoration-accent"
                     >
                       {entry.institution}
                     </a>

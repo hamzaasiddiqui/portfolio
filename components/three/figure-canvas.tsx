@@ -25,6 +25,7 @@ export function FigureCanvas({ present }: { present: boolean }) {
 
   return (
     <Canvas
+      style={{ pointerEvents: "none" }}
       frameloop={running ? "always" : "never"}
       // A 3x buffer buys nothing on a matte surface lit by one tube.
       dpr={[1, 1.75]}

@@ -37,15 +37,15 @@ export function ExperienceSection({ experiences }: { experiences: Tables<"experi
               </div>
 
               <div>
-                <h3 className="font-display text-h2 font-medium">{experience.role}</h3>
+                <h3 className="font-display text-h3 font-medium">{experience.role}</h3>
 
-                <p className="mt-1 font-mono text-meta text-accent uppercase">
+                <p className="mt-1.5 font-mono text-body text-accent uppercase">
                   {experience.company_url ? (
                     <a
                       href={experience.company_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="transition-colors duration-200 ease-apple hover:text-accent-ink"
+                      className="underline decoration-accent/30 decoration-1 underline-offset-[6px] transition-colors duration-200 ease-apple hover:text-accent-ink hover:decoration-accent"
                     >
                       {experience.company}
                     </a>
@@ -55,7 +55,7 @@ export function ExperienceSection({ experiences }: { experiences: Tables<"experi
                 </p>
 
                 {experience.highlights.length > 0 ? (
-                  <ul className="mt-5 flex max-w-prose flex-col gap-2.5">
+                  <ul className="mt-5 flex max-w-4xl flex-col gap-2.5">
                     {experience.highlights.map((highlight, index) => (
                       <li
                         key={index}

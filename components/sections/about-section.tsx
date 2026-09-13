@@ -15,11 +15,11 @@ export function AboutSection({ profile }: { profile: Tables<"profile"> }) {
           {/* The name lives permanently in the sidebar, so the page's one
               <h1> is the tagline. */}
           {profile.tagline ? (
-            <h1 className="font-display text-display font-medium text-balance uppercase">{profile.tagline}</h1>
+            <h1 className="font-display text-h1 font-medium text-balance uppercase">{profile.tagline}</h1>
           ) : null}
 
           {profile.about_text ? (
-            <div className="mt-12 max-w-md border-t border-border pt-5">
+            <div className="mt-10 max-w-2xl border-t border-border pt-5">
               <p className="mb-3 font-mono text-meta text-muted-foreground uppercase">About</p>
               <RichTextBlock
                 text={profile.about_text}

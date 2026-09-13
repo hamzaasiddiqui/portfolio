@@ -107,8 +107,8 @@ export default async function Home() {
           {populated.skills ? <SkillsSection skills={skills} /> : null}
           {populated.process ? <ProcessSection steps={processSteps} /> : null}
           {populated.experience ? <ExperienceSection experiences={experiences} /> : null}
-          {populated.education ? <EducationSection education={education} /> : null}
           {populated.projects ? <ProjectsSection projects={projects} /> : null}
+          {populated.education ? <EducationSection education={education} /> : null}
           <ConnectSection socialLinks={socialLinks} />
         </main>
 

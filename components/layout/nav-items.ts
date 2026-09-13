@@ -16,7 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Skills", href: "#skills", icon: "wrench" },
   { label: "Process", href: "#process", icon: "git-branch" },
   { label: "Experience", href: "#experience", icon: "briefcase" },
-  { label: "Education", href: "#education", icon: "graduation-cap" },
   { label: "Projects", href: "#projects", icon: "folder-open" },
+  { label: "Education", href: "#education", icon: "graduation-cap" },
   { label: "Connect", href: "#connect", icon: "envelope-open" },
 ];
