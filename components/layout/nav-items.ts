@@ -1,7 +1,14 @@
 export interface NavItem {
   label: string;
   href: string;
-  icon: "user-circle" | "wrench" | "git-branch" | "briefcase" | "folder-open" | "envelope-open";
+  icon:
+    | "user-circle"
+    | "wrench"
+    | "git-branch"
+    | "briefcase"
+    | "graduation-cap"
+    | "folder-open"
+    | "envelope-open";
 }
 
 export const NAV_ITEMS: NavItem[] = [
@@ -9,6 +16,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Skills", href: "#skills", icon: "wrench" },
   { label: "Process", href: "#process", icon: "git-branch" },
   { label: "Experience", href: "#experience", icon: "briefcase" },
+  { label: "Education", href: "#education", icon: "graduation-cap" },
   { label: "Projects", href: "#projects", icon: "folder-open" },
   { label: "Connect", href: "#connect", icon: "envelope-open" },
 ];

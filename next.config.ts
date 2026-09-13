@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   // Default position (bottom-left) sits exactly under the collapsed
   // sidebar's control row and intercepted real clicks on it during dev.
   devIndicators: false,
+  // three and drei ship untranspiled ESM/CJS that the App Router otherwise
+  // chokes on with "module is not a function". A package must never appear in
+  // both this list and serverExternalPackages.
+  transpilePackages: ["three", "@react-three/drei"],
   images: {
     remotePatterns: [
       {

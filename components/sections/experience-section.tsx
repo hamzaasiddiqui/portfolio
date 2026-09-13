@@ -1,4 +1,5 @@
 import { Section, SectionLabel } from "@/components/sections/section";
+import { RichText } from "@/components/rich-text";
 import type { Tables } from "@/lib/supabase/database.types";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" });
@@ -37,11 +38,37 @@ export function ExperienceSection({ experiences }: { experiences: Tables<"experi
 
               <div>
                 <h3 className="font-display text-h2 font-medium">{experience.role}</h3>
-                <p className="mt-1 font-mono text-meta text-accent uppercase">{experience.company}</p>
-                {experience.description ? (
-                  <p className="mt-4 max-w-prose text-body text-pretty text-muted-foreground">
-                    {experience.description}
-                  </p>
+
+                <p className="mt-1 font-mono text-meta text-accent uppercase">
+                  {experience.company_url ? (
+                    <a
+                      href={experience.company_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors duration-200 ease-apple hover:text-accent-ink"
+                    >
+                      {experience.company}
+                    </a>
+                  ) : (
+                    experience.company
+                  )}
+                </p>
+
+                {experience.highlights.length > 0 ? (
+                  <ul className="mt-5 flex max-w-prose flex-col gap-2.5">
+                    {experience.highlights.map((highlight, index) => (
+                      <li
+                        key={index}
+                        className="relative pl-5 text-body text-pretty text-muted-foreground"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="absolute top-[0.65em] left-0 size-1 rounded-full bg-accent"
+                        />
+                        <RichText text={highlight} />
+                      </li>
+                    ))}
+                  </ul>
                 ) : null}
               </div>
             </li>

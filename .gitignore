@@ -38,6 +38,9 @@ CLAUDE.md
 PLAN.md
 wireframe.excalidraw
 
+# playwright mcp session artifacts
+.playwright-mcp/
+
 # vercel
 .vercel
 

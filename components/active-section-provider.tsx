@@ -1,29 +1,34 @@
 "use client";
 
-import { createContext, use, useEffect, useRef, useState, type ReactNode } from "react";
-import { NAV_ITEMS } from "@/components/layout/nav-items";
+import { createContext, use, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { type NavItem } from "@/components/layout/nav-items";
 
 interface ActiveSectionContextValue {
   activeId: string;
   activeLabel: string;
 }
 
-const SECTION_IDS = NAV_ITEMS.map((item) => item.href.slice(1));
-
 const ActiveSectionContext = createContext<ActiveSectionContextValue>({
-  activeId: SECTION_IDS[0],
-  activeLabel: NAV_ITEMS[0].label,
+  activeId: "",
+  activeLabel: "",
 });
 
-export function ActiveSectionProvider({ children }: { children: ReactNode }) {
-  const [activeId, setActiveId] = useState(SECTION_IDS[0]);
+export function ActiveSectionProvider({
+  items,
+  children,
+}: {
+  items: NavItem[];
+  children: ReactNode;
+}) {
+  const sectionIds = useMemo(() => items.map((item) => item.href.slice(1)), [items]);
+  const [activeId, setActiveId] = useState(sectionIds[0] ?? "");
   // Tracks each section's intersection ratio so we can pick the most-visible
   // one on every observer callback, rather than reacting to whichever
   // section's entry happened to fire last.
   const ratios = useRef(new Map<string, number>());
 
   useEffect(() => {
-    const elements = SECTION_IDS.map((id) => document.getElementById(id)).filter(
+    const elements = sectionIds.map((id) => document.getElementById(id)).filter(
       (el): el is HTMLElement => el !== null
     );
     if (elements.length === 0) return;
@@ -34,9 +39,9 @@ export function ActiveSectionProvider({ children }: { children: ReactNode }) {
           ratios.current.set(entry.target.id, entry.intersectionRatio);
         }
 
-        let bestId = SECTION_IDS[0];
+        let bestId = sectionIds[0];
         let bestRatio = 0;
-        for (const id of SECTION_IDS) {
+        for (const id of sectionIds) {
           const ratio = ratios.current.get(id) ?? 0;
           if (ratio > bestRatio) {
             bestRatio = ratio;
@@ -53,17 +58,18 @@ export function ActiveSectionProvider({ children }: { children: ReactNode }) {
 
     for (const el of elements) observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [sectionIds]);
 
   useEffect(() => {
     // replaceState (not pushState/location.hash) — reflects the section in
     // the URL for deep-linking without adding a history entry per section
     // scrolled past, and without triggering the browser's own
     // scroll-into-view behavior that setting location.hash would cause.
+    if (!activeId) return;
     window.history.replaceState(null, "", `#${activeId}`);
   }, [activeId]);
 
-  const activeLabel = NAV_ITEMS.find((item) => item.href.slice(1) === activeId)?.label ?? "";
+  const activeLabel = items.find((item) => item.href.slice(1) === activeId)?.label ?? "";
 
   return <ActiveSectionContext value={{ activeId, activeLabel }}>{children}</ActiveSectionContext>;
 }

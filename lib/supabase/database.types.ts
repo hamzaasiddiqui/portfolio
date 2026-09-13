@@ -58,13 +58,50 @@ export type Database = {
         }
         Relationships: []
       }
+      education: {
+        Row: {
+          activities: string[]
+          created_at: string
+          degree: string
+          display_order: number
+          graduation_year: number | null
+          honors: string[]
+          id: string
+          institution: string
+          institution_url: string | null
+        }
+        Insert: {
+          activities?: string[]
+          created_at?: string
+          degree: string
+          display_order?: number
+          graduation_year?: number | null
+          honors?: string[]
+          id?: string
+          institution: string
+          institution_url?: string | null
+        }
+        Update: {
+          activities?: string[]
+          created_at?: string
+          degree?: string
+          display_order?: number
+          graduation_year?: number | null
+          honors?: string[]
+          id?: string
+          institution?: string
+          institution_url?: string | null
+        }
+        Relationships: []
+      }
       experiences: {
         Row: {
           company: string
+          company_url: string | null
           created_at: string
-          description: string | null
           display_order: number
           end_date: string | null
+          highlights: string[]
           id: string
           is_current: boolean
           location: string | null
@@ -73,10 +110,11 @@ export type Database = {
         }
         Insert: {
           company: string
+          company_url?: string | null
           created_at?: string
-          description?: string | null
           display_order?: number
           end_date?: string | null
+          highlights?: string[]
           id?: string
           is_current?: boolean
           location?: string | null
@@ -85,10 +123,11 @@ export type Database = {
         }
         Update: {
           company?: string
+          company_url?: string | null
           created_at?: string
-          description?: string | null
           display_order?: number
           end_date?: string | null
+          highlights?: string[]
           id?: string
           is_current?: boolean
           location?: string | null
@@ -204,27 +243,24 @@ export type Database = {
           category: string
           created_at: string
           display_order: number
-          icon_name: string | null
+          icon_slug: string
           id: string
-          level: number | null
           name: string
         }
         Insert: {
           category: string
           created_at?: string
           display_order?: number
-          icon_name?: string | null
+          icon_slug: string
           id?: string
-          level?: number | null
           name: string
         }
         Update: {
           category?: string
           created_at?: string
           display_order?: number
-          icon_name?: string | null
+          icon_slug?: string
           id?: string
-          level?: number | null
           name?: string
         }
         Relationships: []
