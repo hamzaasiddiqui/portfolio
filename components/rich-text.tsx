@@ -41,7 +41,16 @@ export function RichText({ text }: { text: string }) {
   return <>{parse(text)}</>;
 }
 
-export function RichTextBlock({ text, className }: { text: string; className?: string }) {
+export function RichTextBlock({
+  text,
+  className,
+  reveal = false,
+}: {
+  text: string;
+  className?: string;
+  /** Tag every paragraph for the scroll-reveal (components/motion/reveal-manager). */
+  reveal?: boolean;
+}) {
   const paragraphs = text
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
@@ -50,7 +59,7 @@ export function RichTextBlock({ text, className }: { text: string; className?: s
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {paragraphs.map((paragraph, index) => (
-        <p key={index}>
+        <p key={index} data-reveal={reveal ? "" : undefined}>
           <RichText text={paragraph} />
         </p>
       ))}

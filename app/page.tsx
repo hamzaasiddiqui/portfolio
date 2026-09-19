@@ -15,6 +15,8 @@ import { SectionIndicator } from "@/components/layout/section-indicator";
 import { Copyright } from "@/components/layout/footer";
 import { ModelCredit } from "@/components/layout/credit";
 import { FigureLayer } from "@/components/three/figure-layer";
+import { IntroLoader } from "@/components/motion/intro-loader";
+import { IntroReveal } from "@/components/motion/intro-reveal";
 import { AboutSection } from "@/components/sections/about-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 import { ProcessSection } from "@/components/sections/process-section";
@@ -72,6 +74,7 @@ export default async function Home() {
 
   return (
     <ActiveSectionProvider items={navItems}>
+      <IntroLoader name={profile.name} />
       <div className="relative min-h-full">
         {/* Ticket 3: the figure lives in its own fixed layer pinned to
             About's empty first column, so it persists across sections rather
@@ -90,12 +93,12 @@ export default async function Home() {
           className="pointer-events-none fixed inset-x-0 top-0 z-(--z-overlay) flex items-start justify-end gap-6 p-(--gutter)"
           style={{ paddingLeft: "calc(var(--sidebar-offset) + var(--gutter))" }}
         >
-          <div className="pointer-events-auto hidden lg:block">
+          <IntroReveal delay={0.5} className="pointer-events-auto hidden lg:block">
             <SectionIndicator />
-          </div>
-          <div className="pointer-events-auto">
+          </IntroReveal>
+          <IntroReveal delay={0.6} className="pointer-events-auto">
             <SocialLinks links={socialLinks} />
-          </div>
+          </IntroReveal>
         </div>
 
         <main
@@ -109,7 +112,11 @@ export default async function Home() {
           {populated.experience ? <ExperienceSection experiences={experiences} /> : null}
           {populated.projects ? <ProjectsSection projects={projects} /> : null}
           {populated.education ? <EducationSection education={education} /> : null}
-          <ConnectSection socialLinks={socialLinks} />
+          <ConnectSection
+            socialLinks={socialLinks}
+            avatarUrl={profile.avatar_url}
+            name={profile.name}
+          />
         </main>
 
         <Copyright />

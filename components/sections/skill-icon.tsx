@@ -17,7 +17,7 @@ export function SkillIcon({
       <span
         aria-hidden="true"
         className={cn(
-          "flex size-5 shrink-0 items-center justify-center rounded-sm border border-current font-mono text-[0.625rem] leading-none font-medium",
+          "flex size-5 shrink-0 items-center justify-center rounded-sm border border-current font-label text-[0.625rem] leading-none font-medium",
           className
         )}
       >

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { Reveal } from "@/components/motion/reveal";
 
 export function Section({
   id,
@@ -46,7 +45,10 @@ export function Section({
       )}
       style={{ scrollMarginTop: "var(--gutter)", scrollSnapAlign: "start" }}
     >
-      <Reveal className="w-full">{children}</Reveal>
+      {/* Entrance animation is not wrapped here: each piece of content
+          carries a data-reveal attribute and components/motion/reveal-manager
+          animates them in as they scroll into view. */}
+      <div className="w-full">{children}</div>
     </section>
   );
 }
@@ -60,8 +62,12 @@ export function Section({
  */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mb-12 w-full border-b border-border pb-4 font-mono text-meta text-muted-foreground uppercase">
-      {children}
-    </h2>
+    <div className="mb-12 w-full">
+      <h2 data-reveal className="pb-4 font-label text-meta text-muted-foreground uppercase">
+        {children}
+      </h2>
+      {/* A real element rather than a border, so it can draw itself in. */}
+      <span data-reveal="line" aria-hidden="true" className="block h-px w-full bg-border" />
+    </div>
   );
 }

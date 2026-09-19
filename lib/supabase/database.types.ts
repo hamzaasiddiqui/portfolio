@@ -67,6 +67,7 @@ export type Database = {
           graduation_year: number | null
           honors: string[]
           id: string
+          image_url: string | null
           institution: string
           institution_url: string | null
         }
@@ -78,6 +79,7 @@ export type Database = {
           graduation_year?: number | null
           honors?: string[]
           id?: string
+          image_url?: string | null
           institution: string
           institution_url?: string | null
         }
@@ -89,6 +91,7 @@ export type Database = {
           graduation_year?: number | null
           honors?: string[]
           id?: string
+          image_url?: string | null
           institution?: string
           institution_url?: string | null
         }

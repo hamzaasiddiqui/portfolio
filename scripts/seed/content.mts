@@ -27,15 +27,17 @@ export const PROFILE: TablesInsert<"profile"> = {
     `I work across the full stack, and I especially enjoy building AI-powered applications and automations, though that's more of a strong interest than my whole identity. Scalability, clean schema design, and readable code matter a lot to me, as does good product design.`,
     `Right now I'm a Software Engineer at [TreeTraction](https://treetraction.com/), where I work on AI-powered automations, data pipelines, and their CRM, supporting the US direct-mail marketing industry. Before this, I was at [Devsinc](https://devsinc.com/).`,
   ].join("\n\n"),
-  resume_url: "/resume.pdf",
-  avatar_url: null,
+  resume_url: "/hsiddiqui-resume.pdf",
+  avatar_url: "/images/portrait.jpg",
   seo_title: "Hamza Siddiqui — Software Engineer",
   seo_description:
     "Software engineer building data-intensive web applications, AI-powered automations, and the data pipelines behind them.",
 };
 
 export const SOCIAL_LINKS: TablesInsert<"social_links">[] = [
-  { platform: "GitHub", url: "https://github.com/hamzaasiddiqui", icon_name: "github-logo", display_order: 0 },
+  { platform: "LinkedIn", url: "https://www.linkedin.com/in/-hamza-siddiqui/", icon_name: "linkedin-logo", display_order: 0 },
+  { platform: "GitHub", url: "https://github.com/hamzaasiddiqui", icon_name: "github-logo", display_order: 1 },
+  { platform: "Email", url: "mailto:hamza.eins@gmail.com", icon_name: "envelope-simple", display_order: 2 },
 ];
 
 /**
@@ -156,14 +158,16 @@ export const EDUCATION: TablesInsert<"education">[] = [
       "Network Administrator at [Netronix](https://www.netronixgiki.com/)",
       "Member of Team Infinity",
     ],
+    image_url: "/images/giki.jpg",
     display_order: 0,
   },
 ];
 
 /**
  * `url` is null on every project: these are source-only, with no deployment to
- * point at. `image_url` is null for now — screenshots land here later and the
- * card layout already accounts for their absence.
+ * point at. `image_url` points at a landing-page render under
+ * public/images/projects — each one a mock of what the project's own site
+ * would look like, since none of them has a deployment to screenshot.
  *
  * `tags` are deliberately empty rather than guessed; they render as the card's
  * tech strip and wrong stacks are worse than none.
@@ -175,7 +179,7 @@ export const PROJECTS: TablesInsert<"projects">[] = [
       "Ask a database questions in plain English and get answers back — a natural-language layer that translates prompts into SQL and renders the result as a chart.",
     url: null,
     repo_url: "https://github.com/hamzaasiddiqui/NLP-Powered-BI",
-    image_url: null,
+    image_url: "/images/projects/nlp-powered-bi.jpg",
     tags: [],
     featured: true,
     display_order: 0,
@@ -186,7 +190,7 @@ export const PROJECTS: TablesInsert<"projects">[] = [
       "A browser-native speech-to-text playground that streams microphone audio to a transcription model and prints the transcript as you speak.",
     url: null,
     repo_url: "https://github.com/hamzaasiddiqui/speech-to-text-web",
-    image_url: null,
+    image_url: "/images/projects/stt-web.jpg",
     tags: [],
     featured: false,
     display_order: 1,
@@ -197,7 +201,7 @@ export const PROJECTS: TablesInsert<"projects">[] = [
       "A voice-driven assistant that turns spoken commands into device actions, wiring a language model up to a real IoT control layer.",
     url: null,
     repo_url: "https://github.com/hamzaasiddiqui/H.E.L.I.X._AIProj",
-    image_url: null,
+    image_url: "/images/projects/helix.jpg",
     tags: [],
     featured: true,
     display_order: 2,
@@ -208,7 +212,7 @@ export const PROJECTS: TablesInsert<"projects">[] = [
       "A scheduling platform for an academic department: students book time with faculty, and the system generates conflict-free timetables around them.",
     url: null,
     repo_url: "https://github.com/hamzaasiddiqui/timetable-and-teacher-appointment-system",
-    image_url: null,
+    image_url: "/images/projects/staff-appointments.jpg",
     tags: [],
     featured: false,
     display_order: 3,
@@ -219,7 +223,7 @@ export const PROJECTS: TablesInsert<"projects">[] = [
       "A campus gate access system for GIK Institute that verifies arrivals against a central register and keeps a live log of every entry and exit.",
     url: null,
     repo_url: "https://github.com/hamzaasiddiqui/new-gate-system-gik",
-    image_url: null,
+    image_url: "/images/projects/gate-access.jpg",
     tags: [],
     featured: false,
     display_order: 4,

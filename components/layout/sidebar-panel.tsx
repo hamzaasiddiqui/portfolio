@@ -1,8 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/components/layout/sidebar-context";
+import { useIntro } from "@/components/motion/intro-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { ResumeButton } from "@/components/layout/resume-button";
 import { CollapseButton } from "@/components/layout/collapse-button";
@@ -26,12 +28,20 @@ export function SidebarPanel({
   children: ReactNode;
 }) {
   const { isCollapsed } = useSidebar();
+  const { introDone } = useIntro();
 
   return (
     // Width tracks --sidebar-offset directly (see globals.css) rather than a
     // local isCollapsed ternary — the provider is the single source of truth
     // for that variable, so content padding can never drift out of sync.
-    <aside
+    //
+    // motion.aside so the panel can slide in as the intro curtain lifts. The
+    // transform it animates is separate from the CSS width transition below,
+    // and it settles to identity, so neither interferes with the other.
+    <motion.aside
+      initial={{ opacity: 0, x: -24 }}
+      animate={introDone ? { opacity: 1, x: 0 } : undefined}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       className={cn(
         // Two layouts, one element: a top bar on small screens (leaving the
         // top-right corner free for the social cluster), a column from lg up.
@@ -104,6 +114,6 @@ export function SidebarPanel({
           </span>
         </div>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

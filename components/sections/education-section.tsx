@@ -1,6 +1,54 @@
+import type { ReactNode } from "react";
 import { Section, SectionLabel } from "@/components/sections/section";
 import { RichText } from "@/components/rich-text";
+import { ParallaxImage } from "@/components/motion/parallax-image";
 import type { Tables } from "@/lib/supabase/database.types";
+
+// One corner cut at 45°, sized in rem so the angle holds at every aspect
+// ratio — capped at a share of the width so the cut never eats a small box.
+const CUT = "min(7rem, 30%)";
+const CHAMFER = `polygon(${CUT} 0, 100% 0, 100% 100%, 0 100%, 0 ${CUT})`;
+
+function CampusFigure({ src, alt }: { src: string; alt: string }) {
+  return (
+    <ParallaxImage
+      src={src}
+      alt={alt}
+      sizes="(min-width: 1536px) 34rem, (min-width: 1280px) 28rem, (min-width: 1024px) 22rem, 100vw"
+      // A shallow bleed: the photo is wide, and every percent of bleed is a
+      // percent of zoom on a picture that should stay a whole building.
+      drift={6}
+      className="aspect-video w-full lg:aspect-4/3"
+      // clip-path on the element that scrolls the picture, so the drift
+      // happens inside the shape rather than the shape drifting.
+      style={{ clipPath: CHAMFER }}
+    />
+  );
+}
+
+function Detail({ label, items }: { label: string; items: string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div data-reveal>
+      <dt className="font-label text-meta text-muted-foreground/70 uppercase">{label}</dt>
+      <dd className="mt-2 flex flex-col gap-1 text-body text-muted-foreground">
+        {items.map((item, index) => (
+          <span key={index}>
+            <RichText text={item} />
+          </span>
+        ))}
+      </dd>
+    </div>
+  );
+}
+
+function Kicker({ children }: { children: ReactNode }) {
+  return (
+    <span data-reveal className="font-label text-meta text-muted-foreground uppercase">
+      {children}
+    </span>
+  );
+}
 
 export function EducationSection({ education }: { education: Tables<"education">[] }) {
   return (
@@ -14,20 +62,25 @@ export function EducationSection({ education }: { education: Tables<"education">
           {education.map((entry) => (
             <li
               key={entry.id}
-              className="grid grid-cols-1 gap-x-8 gap-y-3 border-b border-border py-7 first:pt-0 last:border-b-0 sm:grid-cols-[11rem_minmax(0,1fr)]"
+              // Picture on the left, copy on the right — the same shape as a
+              // project row, at a larger scale. The year rides above the
+              // degree as a kicker instead of holding a column of its own.
+              className="grid grid-cols-1 gap-x-12 gap-y-8 border-b border-border py-8 first:pt-0 last:border-b-0 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-center xl:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] xl:gap-x-16 2xl:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]"
             >
-              <div>
-                {entry.graduation_year ? (
-                  <span className="font-mono text-meta text-muted-foreground tabular-nums">
-                    Class of {entry.graduation_year}
-                  </span>
-                ) : null}
-              </div>
+              {entry.image_url ? (
+                <CampusFigure src={entry.image_url} alt={`${entry.institution} campus`} />
+              ) : (
+                <div aria-hidden="true" className="hidden lg:block" />
+              )}
 
-              <div>
-                <h3 className="font-display text-h2 font-medium">{entry.degree}</h3>
+              <div className="flex flex-col">
+                {entry.graduation_year ? <Kicker>Class of {entry.graduation_year}</Kicker> : null}
 
-                <p className="mt-1 font-mono text-meta text-accent uppercase">
+                <h3 data-reveal className="mt-3 font-display text-h2 font-medium text-balance">
+                  {entry.degree}
+                </h3>
+
+                <p data-reveal className="mt-2 font-label text-meta text-accent uppercase">
                   {entry.institution_url ? (
                     <a
                       href={entry.institution_url}
@@ -43,37 +96,17 @@ export function EducationSection({ education }: { education: Tables<"education">
                 </p>
 
                 {entry.honors.length > 0 || entry.activities.length > 0 ? (
-                  <dl className="mt-6 flex flex-col gap-5">
-                    {entry.honors.length > 0 ? (
-                      <div>
-                        <dt className="font-mono text-meta text-muted-foreground/70 uppercase">
-                          Honors
-                        </dt>
-                        <dd className="mt-2 flex flex-col gap-1 text-body text-muted-foreground">
-                          {entry.honors.map((honor, index) => (
-                            <span key={index}>
-                              <RichText text={honor} />
-                            </span>
-                          ))}
-                        </dd>
-                      </div>
-                    ) : null}
-
-                    {entry.activities.length > 0 ? (
-                      <div>
-                        <dt className="font-mono text-meta text-muted-foreground/70 uppercase">
-                          Activities
-                        </dt>
-                        <dd className="mt-2 flex flex-col gap-1 text-body text-muted-foreground">
-                          {entry.activities.map((activity, index) => (
-                            <span key={index}>
-                              <RichText text={activity} />
-                            </span>
-                          ))}
-                        </dd>
-                      </div>
-                    ) : null}
-                  </dl>
+                  <>
+                    <span
+                      data-reveal="line"
+                      aria-hidden="true"
+                      className="mt-8 block h-px w-full bg-border"
+                    />
+                    <dl className="mt-6 grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2">
+                      <Detail label="Honors" items={entry.honors} />
+                      <Detail label="Activities" items={entry.activities} />
+                    </dl>
+                  </>
                 ) : null}
               </div>
             </li>

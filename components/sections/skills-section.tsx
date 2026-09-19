@@ -25,11 +25,14 @@ export function SkillsSection({ skills }: { skills: Tables<"skills">[] }) {
         <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-8">
           {Array.from(groups.entries()).map(([category, items]) => (
             <div key={category}>
-              <p className="font-mono text-meta text-muted-foreground uppercase">{category}</p>
+              <p data-reveal className="font-label text-meta text-muted-foreground uppercase">
+                {category}
+              </p>
               <ul className="mt-4 flex flex-col">
                 {items.map((skill) => (
                   <li
                     key={skill.id}
+                    data-reveal
                     className="group/skill flex items-center gap-3 border-b border-border py-3 last:border-b-0"
                   >
                     <SkillIcon

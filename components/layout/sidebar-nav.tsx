@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { type NavItem } from "@/components/layout/nav-items";
 import { useSidebar } from "@/components/layout/sidebar-context";
 import { useActiveSection } from "@/components/active-section-provider";
+import { useIntro } from "@/components/motion/intro-context";
 
 const ICONS: Record<NavItem["icon"], typeof UserCircle> = {
   "user-circle": UserCircle,
@@ -26,6 +27,7 @@ const ICONS: Record<NavItem["icon"], typeof UserCircle> = {
 export function SidebarNav({ items }: { items: NavItem[] }) {
   const { isCollapsed } = useSidebar();
   const { activeId } = useActiveSection();
+  const { introDone } = useIntro();
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -38,7 +40,15 @@ export function SidebarNav({ items }: { items: NavItem[] }) {
           const Icon = ICONS[item.icon];
 
           return (
-            <li key={item.href} className="relative">
+            // Items fall into place one after another once the panel has
+            // arrived (see SidebarPanel's own entrance delay).
+            <motion.li
+              key={item.href}
+              className="relative"
+              initial={{ opacity: 0, x: -10 }}
+              animate={introDone ? { opacity: 1, x: 0 } : undefined}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.55 + index * 0.06 }}
+            >
               {/* The active marker is a hairline, not a filled pill — it
                   slides between items via a shared layoutId. */}
               {isActive ? (
@@ -56,7 +66,7 @@ export function SidebarNav({ items }: { items: NavItem[] }) {
                 href={item.href}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "flex items-center gap-3 py-2.5 font-mono text-meta whitespace-nowrap uppercase transition-colors duration-200 ease-apple",
+                  "flex items-center gap-3.5 py-3 font-label text-meta whitespace-nowrap uppercase transition-colors duration-200 ease-apple",
                   isCollapsed ? "lg:justify-center" : "lg:pl-4",
                   isActive ? "text-accent" : "text-muted-foreground hover:text-foreground"
                 )}
@@ -73,7 +83,7 @@ export function SidebarNav({ items }: { items: NavItem[] }) {
                 </span>
                 <span className={isCollapsed ? "lg:sr-only" : ""}>{item.label}</span>
               </a>
-            </li>
+            </motion.li>
           );
         })}
       </ul>

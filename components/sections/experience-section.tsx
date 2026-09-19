@@ -25,21 +25,23 @@ export function ExperienceSection({ experiences }: { experiences: Tables<"experi
               key={experience.id}
               className="grid grid-cols-1 gap-x-8 gap-y-3 border-b border-border py-7 first:pt-0 last:border-b-0 sm:grid-cols-[11rem_minmax(0,1fr)]"
             >
-              <div className="flex flex-col gap-1">
-                <span className="font-mono text-meta text-muted-foreground tabular-nums">
+              <div data-reveal className="flex flex-col gap-1">
+                <span className="font-label text-meta text-muted-foreground tabular-nums">
                   {formatRange(experience.start_date, experience.end_date, experience.is_current)}
                 </span>
                 {experience.location ? (
-                  <span className="font-mono text-meta text-muted-foreground/70 uppercase">
+                  <span className="font-label text-meta text-muted-foreground/70 uppercase">
                     {experience.location}
                   </span>
                 ) : null}
               </div>
 
               <div>
-                <h3 className="font-display text-h3 font-medium">{experience.role}</h3>
+                <h3 data-reveal className="font-display text-h3 font-medium">
+                  {experience.role}
+                </h3>
 
-                <p className="mt-1.5 font-mono text-body text-accent uppercase">
+                <p data-reveal className="mt-1.5 font-label text-body text-accent uppercase">
                   {experience.company_url ? (
                     <a
                       href={experience.company_url}
@@ -59,6 +61,7 @@ export function ExperienceSection({ experiences }: { experiences: Tables<"experi
                     {experience.highlights.map((highlight, index) => (
                       <li
                         key={index}
+                        data-reveal
                         className="relative pl-5 text-body text-pretty text-muted-foreground"
                       >
                         <span

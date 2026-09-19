@@ -56,11 +56,16 @@
   --color-sidebar: var(--sidebar);
 
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-jetbrains-mono);
   --font-display: var(--font-outfit);
+  /* The label voice: nav items, section labels, dates, tags, form labels.
+     A wide grotesk set in small caps-style uppercase, not a monospace — a
+     mono at this size read as cramped terminal output. Tailwind's default
+     --font-mono is deliberately left unset so a stray `font-mono` fails
+     loudly instead of quietly falling back to ui-monospace. */
+  --font-label: var(--font-space-grotesk);
 
   /* Type scale. Display sizes run large with tight negative tracking; the
-     mono meta size is small, uppercase and widely tracked. Those two
+     label meta size is small, uppercase and widely tracked. Those two
      registers carry the whole design — there is no third voice. */
   --text-display: clamp(2.75rem, 1.2rem + 6.2vw, 6.5rem);
   --text-display--line-height: 0.92;
@@ -76,9 +81,10 @@
   --text-h3--letter-spacing: -0.02em;
   --text-body: 1rem;
   --text-body--line-height: 1.6;
-  --text-meta: 0.6875rem;
+  --text-meta: 0.8125rem;
   --text-meta--line-height: 1.4;
-  --text-meta--letter-spacing: 0.14em;
+  --text-meta--letter-spacing: 0.1em;
+  --text-meta--font-weight: 500;
 
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
@@ -174,6 +180,23 @@
     outline: 1px solid var(--accent);
     outline-offset: 3px;
   }
+}
+
+/* Scroll-reveal initial state. Only when scripts run (`html.js`, set by the
+   blocking script in app/layout.tsx) and only for people who haven't asked
+   for reduced motion — otherwise every [data-reveal] element is simply
+   visible. components/motion/reveal-manager.tsx animates them in. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+  }
+}
+
+/* A repeat visit in the same tab never sees the loading screen: the
+   blocking script marks it before first paint, and the component then
+   hands the page over immediately. */
+html[data-intro="seen"] .intro-loader {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
