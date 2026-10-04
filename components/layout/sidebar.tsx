@@ -1,21 +1,19 @@
-import type { ReactNode } from "react";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { SidebarPanel } from "@/components/layout/sidebar-panel";
+import { type NavItem } from "@/components/layout/nav-items";
 
 export function Sidebar({
   name,
   resumeUrl,
-  children,
+  navItems,
 }: {
   name: string;
   resumeUrl: string | null;
-  children: ReactNode;
+  navItems: NavItem[];
 }) {
   return (
     <SidebarProvider>
-      <SidebarPanel name={name} resumeUrl={resumeUrl}>
-        {children}
-      </SidebarPanel>
+      <SidebarPanel name={name} resumeUrl={resumeUrl} navItems={navItems} />
     </SidebarProvider>
   );
 }

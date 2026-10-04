@@ -7,23 +7,11 @@ import { useIntro } from "@/components/motion/intro-context";
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 const EASE_IN_OUT = [0.83, 0, 0.17, 1] as const;
 
-// Milestones, in ms from mount.
-const LEAVE_AT = 1700; // name rolls back out
-const LIFT_AT = 2050; // curtain lifts, page starts animating in
+const LEAVE_AT = 1700;
+const LIFT_AT = 2050;
 
 type Phase = "loading" | "leaving" | "gone";
 
-/**
- * First-visit loading screen: the name rolls in letter by letter over a
- * counter and a hairline that fill to 100, then everything rolls out and the
- * whole black curtain lifts off the top of the page.
- *
- * It renders on the server so the very first paint is the curtain, not a
- * flash of page. A blocking script in the root layout marks <html> with
- * data-intro="seen" from sessionStorage before that paint, and the CSS hides
- * the curtain outright in that case, so a reload never replays it. Anyone who
- * asked for reduced motion skips it entirely.
- */
 export function IntroLoader({ name }: { name: string }) {
   const { finishIntro } = useIntro();
   const [phase, setPhase] = useState<Phase>("loading");
@@ -38,8 +26,6 @@ export function IntroLoader({ name }: { name: string }) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (seen || reduced) {
-      // Nothing to show: hand the page over at once. Setting state here is
-      // the point — it's the client-only decision the server couldn't make.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhase("gone");
       finishIntro();
@@ -49,7 +35,6 @@ export function IntroLoader({ name }: { name: string }) {
     try {
       sessionStorage.setItem("intro-seen", "1");
     } catch {
-      // Private browsing: the curtain will simply play again next load.
     }
 
     root.style.overflow = "hidden";
@@ -82,9 +67,6 @@ export function IntroLoader({ name }: { name: string }) {
           className="intro-loader fixed inset-0 z-(--z-modal) flex items-center justify-center bg-background text-foreground"
           exit={{ y: "-100%", transition: { duration: 0.9, ease: EASE_IN_OUT } }}
         >
-          {/* The name. Each letter sits in its own clip box (padded and
-              pulled back so the display face's ascenders survive its tight
-              line-height) and rolls up into place, then on out the top. */}
           <p
             aria-hidden="true"
             className="px-(--gutter) text-center font-display text-display font-medium text-balance"
@@ -120,8 +102,6 @@ export function IntroLoader({ name }: { name: string }) {
             ))}
           </p>
 
-          {/* Footer band: a label on the left, the counter on the right, the
-              fill line along the bottom edge. Fades as the name leaves. */}
           <motion.div
             aria-hidden="true"
             className="absolute inset-x-0 bottom-0 flex items-end justify-between p-(--gutter)"

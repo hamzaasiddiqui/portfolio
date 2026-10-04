@@ -1,12 +1,3 @@
-/**
- * The two public Supabase settings every client needs, read once and
- * checked, so a missing variable fails with its own name instead of
- * supabase-js's "supabaseUrl is required" from deep inside a prerender.
- *
- * They are read with literal `process.env.NEXT_PUBLIC_…` accesses (never
- * through a computed key) because that is what lets Next.js inline them into
- * the browser bundle.
- */
 export function publicSupabaseEnv() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

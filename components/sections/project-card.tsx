@@ -9,25 +9,17 @@ import type { Tables } from "@/lib/supabase/database.types";
 
 const BADGE_SPRING = { stiffness: 400, damping: 30, mass: 0.4 };
 
-/**
- * One project, as a row: a small picture on the left, the copy on the right.
- * The whole row is the link (the title anchor's ::after covers it), so the
- * hover state belongs to the row, not to the picture.
- */
 export function ProjectCard({ project }: { project: Tables<"projects"> }) {
   const href = project.url ?? project.repo_url;
   const showSource = Boolean(project.repo_url && project.url);
   const reduceMotion = useReducedMotion();
   const frameRef = useRef<HTMLDivElement>(null);
 
-  // The "open" badge rides the cursor in picture pixels, and only exists
-  // while the cursor is actually over the picture, not the copy beside it.
   const badgeX = useSpring(useMotionValue(0), BADGE_SPRING);
   const badgeY = useSpring(useMotionValue(0), BADGE_SPRING);
   const badgeScale = useSpring(useMotionValue(0), { stiffness: 320, damping: 24 });
 
   const onPointerMove = (event: PointerEvent<HTMLLIElement>) => {
-    // Touch never hovers: a finger dragging past a row is a scroll.
     if (event.pointerType !== "mouse" || reduceMotion) return;
     const rect = frameRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -44,14 +36,10 @@ export function ProjectCard({ project }: { project: Tables<"projects"> }) {
 
   return (
     <li
-      // The picture is a thumbnail, not a hero: it sits in a narrow first
-      // column and the copy takes the rest of the row.
       className="group/card relative grid grid-cols-1 gap-x-8 gap-y-5 border-b border-border py-7 first:pt-0 last:border-b-0 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center lg:grid-cols-[11rem_minmax(0,1fr)] xl:grid-cols-[13rem_minmax(0,1fr)]"
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
     >
-      {/* The row's bottom hairline fills with accent, left to right, on
-          hover — laid over the border rather than replacing it. */}
       <span
         aria-hidden="true"
         className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-apple group-hover/card:scale-x-100"
@@ -68,8 +56,6 @@ export function ProjectCard({ project }: { project: Tables<"projects"> }) {
             imageClassName="brightness-[0.92] transition-[scale,filter] duration-700 ease-apple group-hover/card:scale-[1.06] group-hover/card:brightness-100"
           />
 
-          {/* Corner brackets: four hairline L's that sit just inside the
-              edges and slide out to the corners on hover. */}
           {(
             [
               "top-0 left-0 border-t border-l",
@@ -91,8 +77,6 @@ export function ProjectCard({ project }: { project: Tables<"projects"> }) {
             />
           ))}
 
-          {/* Centred on the cursor: the springs put its top-left at the
-              pointer and the translate pulls it back by half its own size. */}
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute top-0 left-0 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-background"
@@ -156,15 +140,6 @@ export function ProjectCard({ project }: { project: Tables<"projects"> }) {
   );
 }
 
-/**
- * The title, one letter at a time, each rolling up out of view while an
- * accent copy rolls in beneath it — a wave that runs left to right on hover.
- *
- * Screen readers get the plain string once; the animated letters are
- * decoration. Each letter's clip box is padded above and below and pulled
- * back with a negative margin, so ascenders and descenders survive the
- * display face's tight line-height without changing the line's rhythm.
- */
 function RollingTitle({ text }: { text: string }) {
   const words = text.split(" ");
   let letterIndex = 0;
@@ -174,8 +149,6 @@ function RollingTitle({ text }: { text: string }) {
       <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {words.map((word, wordIndex) => (
-          // The space lives *between* word boxes, not inside one: trailing
-          // whitespace inside an inline-block is collapsed away.
           <Fragment key={wordIndex}>
             {wordIndex > 0 ? " " : null}
             <span className="inline-block whitespace-nowrap">

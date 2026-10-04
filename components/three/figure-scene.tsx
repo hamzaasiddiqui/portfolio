@@ -8,12 +8,6 @@ import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 import { SCREEN_FRAGMENT, SCREEN_VERTEX, createScreenUniforms } from "@/components/three/screen-shader";
 import { ScreenPainter, type Program } from "@/components/three/screen-programs";
 
-/**
- * Head scan by Lee Perry-Smith (Infinite Realities), CC BY 3.0 — the credit
- * line in components/layout/credit.tsx is what satisfies that licence. Only
- * the shoulders and neck survive: the scan is clipped below the chin and a CRT
- * stands in for the head.
- */
 const MODEL_URL = "/models/head.glb";
 
 useGLTF.preload(MODEL_URL);
@@ -45,27 +39,18 @@ const PALETTE = {
   },
 } as const;
 
-/* Geometry below is in the scan's own units: it spans x ±4.28, y ±3.97, with
-   the chin near y = 0. The neck is cut just under it and the CRT hangs low
-   enough that its case swallows the stump. */
 const NECK_CUT = -0.55;
 const CASE = { width: 4.85, height: 4.0, depth: 3.9, radius: 0.2 };
-/** Depth of the front housing; everything behind it is the funnel. */
 const FACE_DEPTH = 1.15;
 const FUNNEL_DEPTH = 2.75;
-/** The tube's throat: square-ish, with the edges well filleted. */
 const THROAT = { width: 1.15, height: 0.95, radius: 0.34 };
-/** Z of the housing's back face, where the funnel starts. */
 const FUNNEL_Z = CASE.depth / 2 - FACE_DEPTH;
 const FACE_Z = CASE.depth / 2 - FACE_DEPTH / 2;
 const CASE_CENTRE: [number, number, number] = [0, NECK_CUT + CASE.height / 2 - 0.28, 0.12];
 
-/** Share of the viewport's height the whole figure occupies. */
 const HEIGHT_FRACTION = 0.46;
-/** Where it stands, as a fraction of the viewport's width from centre. */
 const X_FRACTION = -0.225;
 
-/** The broadcast. Hard cuts, never crossfades — a tube switching feeds. */
 interface Shot {
   program: Program;
   hold: number;
@@ -84,7 +69,6 @@ const SEQUENCE: Shot[] = [
   { program: "terminal", hold: 4 },
 ];
 
-/** One ring of a rounded rectangle, counter-clockwise from the top right. */
 function roundedRectRing(halfWidth: number, halfHeight: number, corner: number, perCorner: number) {
   const radius = Math.min(corner, halfWidth, halfHeight);
   const centres: [number, number, number][] = [
@@ -104,12 +88,6 @@ function roundedRectRing(halfWidth: number, halfHeight: number, corner: number, 
   return points;
 }
 
-/**
- * The tube behind the glass. Lofted from the housing's own outline back to a
- * small square throat: flat sides, filleted edges, and — because every ring is
- * a rounded rectangle rather than a circle pushed into one — an outline that
- * can never bulge past the housing it sits behind.
- */
 function buildFunnel() {
   const RINGS = 12;
   const PER_CORNER = 5;
@@ -118,8 +96,6 @@ function buildFunnel() {
   const positions: number[] = [];
   for (let ring = 0; ring <= RINGS; ring += 1) {
     const t = ring / RINGS;
-    // Eased, not linear: a CRT's glass flares fast off the screen and then
-    // runs almost straight back to the neck.
     const k = Math.pow(t, 0.7);
     const halfWidth = THREE.MathUtils.lerp(CASE.width / 2, THROAT.width, k);
     const halfHeight = THREE.MathUtils.lerp(CASE.height / 2, THROAT.height, k);
@@ -141,7 +117,6 @@ function buildFunnel() {
     }
   }
 
-  // Cap the throat so the tube is not an open pipe when seen from behind.
   const centre = positions.length / 3;
   positions.push(0, 0, -FUNNEL_DEPTH);
   const lastRing = RINGS * perRing;
@@ -156,13 +131,6 @@ function buildFunnel() {
   return geometry;
 }
 
-/**
- * Patches a standard material with the two things the stock one cannot do:
- * a noise dissolve that eats the figure from below like it is sinking into
- * the page, and a falloff that lets its base disappear into the dark instead
- * of ending on a hard silhouette edge. Both are shared uniforms, so the body
- * and the tube are consumed on exactly the same waterline.
- */
 function patchForDissolve(material: THREE.MeshStandardMaterial, uniforms: Record<string, THREE.IUniform>) {
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
@@ -200,14 +168,6 @@ function patchForDissolve(material: THREE.MeshStandardMaterial, uniforms: Record
   material.needsUpdate = true;
 }
 
-/**
- * The mutable three.js objects behind the figure: shader uniforms, the shared
- * dissolve uniforms, the screen painter and the clipping plane. They live at
- * module scope, created once, because every one of them is written to on every
- * frame — which is precisely what a value produced by useMemo or read from a
- * ref during render may not be. There is only ever one figure on the page, so
- * a single instance is the honest model.
- */
 interface SharedResources {
   uniforms: ReturnType<typeof createScreenUniforms>;
   dissolve: {
@@ -235,9 +195,6 @@ function sharedResources(): SharedResources {
       uGround: { value: new THREE.Color("#0d0d0f") },
     },
     painter: new ScreenPainter(),
-    // Clipping planes are world-space, so the plane the material uses is
-    // re-derived from the figure's matrix every frame; `localPlane` is the
-    // definition it is derived from.
     clipPlane: new THREE.Plane(new THREE.Vector3(0, -1, 0), NECK_CUT),
     localPlane: new THREE.Plane(new THREE.Vector3(0, -1, 0), NECK_CUT),
   };
@@ -275,8 +232,6 @@ export function FigureScene({
     dissolve.uGround.value.set(palette.ground);
   }, [palette.accent, palette.ground]);
 
-  // Both materials are built in code rather than in JSX, because they have to
-  // be patched before their first compile.
   const skinRef = useRef<THREE.MeshStandardMaterial | null>(null);
 
   const shellMaterial = useMemo(() => {
@@ -291,9 +246,6 @@ export function FigureScene({
 
   useEffect(() => () => shellMaterial.dispose(), [shellMaterial]);
 
-  // Fittings: near-black for knobs, vents and cable, and one lit pinprick for
-  // the power lamp. Both are patched too, so they are eaten by the same wave
-  // as the case rather than hanging in the air after it has gone.
   const trimMaterial = useMemo(() => {
     const material = new THREE.MeshStandardMaterial({ color: "#141419", roughness: 0.5, metalness: 0 });
     patchForDissolve(material, sharedResources().dissolve);
@@ -321,8 +273,6 @@ export function FigureScene({
 
   const funnel = useMemo(() => buildFunnel(), []);
 
-  // The cap is the skin colour but carries no clipping plane of its own — it
-  // lives below the cut and exists precisely to close it.
   const neckCapMaterial = useMemo(() => {
     const material = new THREE.MeshStandardMaterial({
       color: palette.skin,
@@ -337,8 +287,6 @@ export function FigureScene({
 
   useEffect(() => () => funnel.dispose(), [funnel]);
 
-  // Cables drooping out of the back of the case and over the shoulders. Built
-  // as tubes along a spline rather than modelled, so they cost nothing to ship.
   const cables = useMemo(() => {
     const tube = (points: [number, number, number][], radius: number) =>
       new THREE.TubeGeometry(
@@ -350,8 +298,6 @@ export function FigureScene({
       );
 
     return [
-      // A long loop off the visible cheek, doubling back on itself before it
-      // falls — slack cable, not a wire diagram.
       tube(
         [
           [1.5, -0.4, -1.9],
@@ -412,8 +358,6 @@ export function FigureScene({
       roughness: 0.92,
       metalness: 0,
       clippingPlanes: [sharedResources().clipPlane],
-      // The cut leaves the neck open, so the inside of the shoulders would
-      // otherwise vanish when seen from below.
       side: THREE.DoubleSide,
     });
     patchForDissolve(skin, sharedResources().dissolve);
@@ -429,7 +373,6 @@ export function FigureScene({
     };
   }, [scene, palette.skin]);
 
-  // Fit the whole composition — shoulders plus CRT — to the viewport height.
   const fit = useMemo(() => {
     const box = new THREE.Box3().setFromObject(scene);
     box.max.y = NECK_CUT;
@@ -489,7 +432,6 @@ export function FigureScene({
   const onClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     if (reducedMotion) return;
-    // Interference, not applause: the signal breaks up and the feed cuts.
     glitch.current = 1;
     shot.current.until = 0;
   };
@@ -502,8 +444,6 @@ export function FigureScene({
     const screenMesh = screen.current;
     if (!group || !body || !crt || !screenMesh) return;
 
-    // Clamp: a backgrounded tab returns with a delta of seconds, which would
-    // teleport every damped value below in a single frame.
     const delta = Math.min(rawDelta, 0.1);
     const time = state.clock.elapsedTime;
 
@@ -516,8 +456,6 @@ export function FigureScene({
       }
     }
 
-    // Leaving is fast and staged: the tube cuts out, and a beat later the
-    // background takes the figure. Arriving is slower — it surfaces.
     const dissolving = present || time > leftAt.current + 0.1;
     if (dissolving) {
       presence.current = THREE.MathUtils.damp(presence.current, present ? 1 : 0, present ? 2.6 : 7, delta);
@@ -527,8 +465,6 @@ export function FigureScene({
 
     const p = presence.current;
 
-    // The waterline sweeps from below the figure to above its head as it
-    // leaves, and back down as it returns.
     const bottom = -fit.height / 2;
     const top = fit.height / 2;
     dissolve.uWave.value = THREE.MathUtils.lerp(top + 0.25, bottom - 0.25, p);
@@ -536,7 +472,6 @@ export function FigureScene({
     dissolve.uFadeTop.value = bottom + fit.height * palette.baseFade;
     uniforms.uWave.value = dissolve.uWave.value;
 
-    // Keep the neck cut glued to the figure as it turns.
     body.updateWorldMatrix(true, false);
     clipPlane.copy(localPlane).applyMatrix4(body.matrixWorld);
 
@@ -553,7 +488,6 @@ export function FigureScene({
       return;
     }
 
-    // Run the broadcast only while the tube is on.
     const cut = shot.current;
     if (power.current > 0.35) {
       if (time > cut.until) {
@@ -573,19 +507,10 @@ export function FigureScene({
       painter.paint(frame.program, time, cut.blink);
     }
 
-    // Tracking, properly: the body leans, the tube turns nearly twice as far
-    // and lags a beat behind, and the whole figure shifts a little — enough
-    // parallax that it reads as watching you rather than as a still.
     const aim = pointer.current.x * p;
     const tilt = pointer.current.y * p;
-    // The figure stands well left of the canvas centre, so under perspective a
-    // tube pointed down -Z reads as facing away to the left. This turns it
-    // back toward the reader first; the tracking below is measured from there.
     const facing = Math.atan2(-group.position.x, state.camera.position.z - group.position.z);
 
-    // The neck is part of the scan, so it cannot bend — the bust has to turn
-    // with the tube or the head shears off it. The body carries most of the
-    // rotation and the head only leads it by a little.
     const look = facing * 0.72 + aim * 0.42;
     body.rotation.y = THREE.MathUtils.damp(body.rotation.y, look * 0.82, 5, delta);
     crt.rotation.y = THREE.MathUtils.damp(crt.rotation.y, look * 0.18, 6.5, delta);
@@ -595,8 +520,6 @@ export function FigureScene({
     group.position.x = X_FRACTION * viewport.width + aim * 0.06;
     group.position.y = Math.sin(time * 0.4) * 0.025 * p + tilt * -0.03;
 
-    // Tell the canvas when there is nothing left to draw, so it can stop the
-    // loop entirely rather than rendering a figure that has already gone.
     if (!present && !settled.current && p < 0.002 && glitch.current < 0.01) {
       settled.current = true;
       onSettledChange(true);
@@ -606,43 +529,26 @@ export function FigureScene({
   return (
     <>
       <ambientLight intensity={palette.ambient} />
-      {/* Key from front-left, well above: it carves the shoulders and leaves
-          the base in shadow, which is what puts the figure in a dark room
-          rather than on a white sweep. */}
       <directionalLight position={[3, 5.5, 4]} intensity={palette.key} />
-      {/* Rim from behind, in the accent: separates the silhouette from a
-          background of the same value without lighting the front. */}
       <pointLight
         position={[-2.6, 1.6, -3.2]}
         color={palette.rim}
         intensity={palette.rimIntensity}
         distance={9}
       />
-      {/* The tube's own spill onto the case and shoulders. */}
       <pointLight position={[0, 1.15, 2.1]} color={palette.accent} intensity={palette.spill} distance={3.4} />
 
       <group ref={root}>
         <group ref={yaw} scale={fit.scale} position={fit.offset}>
           <primitive object={scene} />
 
-          {/* The clip leaves the neck open at the top. Tilting the chassis up
-              opens a gap and you see straight into it, so the stump is capped
-              just under the cut — in the body group, not the head, so it stays
-              put while the tube moves. */}
           <mesh position={[0, NECK_CUT - 0.06, 0.05]} scale={[1, 1, 0.92]}>
             <cylinderGeometry args={[0.86, 0.86, 0.12, 24]} />
             <primitive object={neckCapMaterial} attach="material" />
           </mesh>
 
-          {/* The head group sits at the collar, and the chassis hangs above
-              it, so pitch rotates about the mount the way a real one would —
-              tilting up lifts the face and swings the tube back, instead of
-              pushing the bottom edge through the neck. */}
           <group ref={head} position={[CASE_CENTRE[0], CASE_CENTRE[1] - CASE.height / 2, CASE_CENTRE[2]]}>
             <group position={[0, CASE.height / 2, 0]}>
-            {/* A CRT is not a cube: a shallow housing carries the glass, and
-                behind it the tube funnels back to a narrow square throat with
-                the electron gun's neck on the end. */}
             <RoundedBox
               args={[CASE.width, CASE.height, FACE_DEPTH]}
               radius={CASE.radius}
@@ -664,19 +570,11 @@ export function FigureScene({
               <primitive object={trimMaterial} attach="material" />
             </mesh>
 
-            {/* Fittings. A blank box reads as a prop; a bezel, ridges, a
-                speaker, knobs and a lamp row read as equipment someone keeps
-                running. */}
-
-            {/* Dark surround behind the glass, sitting a hair proud of the
-                case so the tube reads as recessed into it rather than painted
-                on. Kept flat: any depth here would occlude the domed glass. */}
             <mesh position={[0, 0.12, CASE.depth / 2 + 0.01]}>
               <planeGeometry args={[CASE.width * 0.87, CASE.height * 0.76]} />
               <primitive object={trimMaterial} attach="material" />
             </mesh>
 
-            {/* Corner brackets clamping the glass into the face. */}
             {[
               [-1, -1],
               [1, -1],
@@ -698,7 +596,6 @@ export function FigureScene({
               </group>
             ))}
 
-            {/* Ridges across the crown, and a carry bar above them. */}
             {[FACE_Z - 0.34, FACE_Z, FACE_Z + 0.34].map((z) => (
               <mesh key={z} position={[0, CASE.height / 2 - 0.02, z]}>
                 <boxGeometry args={[CASE.width * 0.86, 0.09, 0.12]} />
@@ -709,9 +606,6 @@ export function FigureScene({
               <boxGeometry args={[CASE.width * 0.66, 0.22, 0.9]} />
               <primitive object={trimMaterial} attach="material" />
             </mesh>
-            {/* Speaker disc on the cheek the reader actually sees — the head
-                stands left of centre and turns toward the camera, so its +X
-                side is the one on show. */}
             <group position={[CASE.width / 2 + 0.06, 0.1, FACE_Z]} rotation={[0, 0, Math.PI / 2]}>
               <mesh>
                 <cylinderGeometry args={[0.62, 0.62, 0.18, 28]} />
@@ -723,7 +617,6 @@ export function FigureScene({
               </mesh>
             </group>
 
-            {/* Controls and the lamp row along the bottom bezel. */}
             <group position={[0, -CASE.height / 2 + 0.36, CASE.depth / 2 - 0.05]}>
               {[-2.05, -1.6, -1.15].map((x) => (
                 <mesh key={x} position={[x, 0, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
@@ -740,7 +633,6 @@ export function FigureScene({
               ))}
             </group>
 
-            {/* Vent slots down the far cheek. */}
             <group position={[-CASE.width / 2 + 0.02, 0.2, FACE_Z]}>
               {[-0.55, -0.2, 0.15, 0.5].map((y) => (
                 <mesh key={y} position={[0, y, 0]}>
@@ -756,7 +648,6 @@ export function FigureScene({
               </mesh>
             ))}
 
-            {/* The picture, inset into the case so the shell reads as a bezel. */}
             <mesh ref={screen} position={[0, 0.12, CASE.depth / 2 + 0.045]}>
               <planeGeometry args={[CASE.width * 0.83, CASE.height * 0.72, 32, 26]} />
               <shaderMaterial

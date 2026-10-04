@@ -7,8 +7,6 @@ import { META_LINK } from "@/components/layout/control-styles";
 export function ResumeButton({ resumeUrl }: { resumeUrl: string | null }) {
   const { isCollapsed } = useSidebar();
 
-  // Explicit wireframe requirement: absent when collapsed, not merely
-  // hidden — a 4rem rail has no room for a text label.
   if (isCollapsed || !resumeUrl) return null;
 
   return (

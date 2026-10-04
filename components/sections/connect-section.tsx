@@ -16,14 +16,7 @@ export function ConnectSection({
     <Section id="connect" label="Connect">
       <SectionLabel>Connect</SectionLabel>
 
-      {/* One band, three columns from xl: a tall portrait, the invitation
-          with the ways to reach me under it, and the form. The middle column
-          is sized so the longest word of the heading ("SOMETHING") never has
-          to break. Below xl there is no room for three, so the portrait
-          stacks above the heading and the form keeps the right column. */}
       <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-x-16 xl:grid-cols-[14rem_minmax(0,1fr)_minmax(0,22rem)] xl:gap-x-12 2xl:grid-cols-[16rem_minmax(0,1fr)_minmax(0,24rem)] 2xl:gap-x-16">
-        {/* `contents` at xl dissolves this wrapper so the portrait and the
-            copy become grid items of their own. */}
         <div className="flex flex-col gap-10 xl:contents">
           {avatarUrl ? (
             <ParallaxImage

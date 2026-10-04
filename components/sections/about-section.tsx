@@ -6,14 +6,9 @@ export function AboutSection({ profile }: { profile: Tables<"profile"> }) {
   return (
     <Section id="about" label="About">
       <div className="grid grid-cols-1 items-center gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,30%)_minmax(0,1fr)]">
-        {/* Desktop keeps this column clear for the figure, which FigureLayer
-            floats over the whole viewport. Below that breakpoint there is no
-            figure at all, so the column collapses instead of leaving a hole. */}
         <div aria-hidden="true" className="hidden aspect-square w-full lg:block" />
 
         <div>
-          {/* The name lives permanently in the sidebar, so the page's one
-              <h1> is the tagline. */}
           {profile.tagline ? (
             <h1 data-reveal className="font-display text-h1 font-medium text-balance uppercase">
               {profile.tagline}

@@ -5,8 +5,6 @@ import { submitContactMessage, type ContactFormState } from "@/lib/actions/conta
 
 const initialState: ContactFormState = { status: "idle" };
 
-// Underline fields, not boxes: a hairline is the only chrome anywhere else
-// on the page, so the form uses the same one.
 const FIELD =
   "w-full border-b border-border bg-transparent py-2 text-body text-foreground outline-none transition-colors duration-200 ease-apple placeholder:text-muted-foreground/50 focus:border-accent";
 
@@ -17,8 +15,6 @@ export function ContactForm() {
 
   return (
     <form action={formAction} className="relative flex flex-col gap-7">
-      {/* Honeypot — hidden from sighted users and screen readers alike, so
-          only an indiscriminate form-filling bot ever populates it. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label htmlFor="contact-website">Website</label>
         <input id="contact-website" name="website" type="text" tabIndex={-1} autoComplete="off" />

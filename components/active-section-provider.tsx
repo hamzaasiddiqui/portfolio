@@ -22,9 +22,6 @@ export function ActiveSectionProvider({
 }) {
   const sectionIds = useMemo(() => items.map((item) => item.href.slice(1)), [items]);
   const [activeId, setActiveId] = useState(sectionIds[0] ?? "");
-  // Tracks each section's intersection ratio so we can pick the most-visible
-  // one on every observer callback, rather than reacting to whichever
-  // section's entry happened to fire last.
   const ratios = useRef(new Map<string, number>());
 
   useEffect(() => {
@@ -61,10 +58,6 @@ export function ActiveSectionProvider({
   }, [sectionIds]);
 
   useEffect(() => {
-    // replaceState (not pushState/location.hash) — reflects the section in
-    // the URL for deep-linking without adding a history entry per section
-    // scrolled past, and without triggering the browser's own
-    // scroll-into-view behavior that setting location.hash would cause.
     if (!activeId) return;
     window.history.replaceState(null, "", `#${activeId}`);
   }, [activeId]);

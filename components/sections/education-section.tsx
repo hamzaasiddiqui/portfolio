@@ -4,8 +4,6 @@ import { RichText } from "@/components/rich-text";
 import { ParallaxImage } from "@/components/motion/parallax-image";
 import type { Tables } from "@/lib/supabase/database.types";
 
-// One corner cut at 45°, sized in rem so the angle holds at every aspect
-// ratio — capped at a share of the width so the cut never eats a small box.
 const CUT = "min(7rem, 30%)";
 const CHAMFER = `polygon(${CUT} 0, 100% 0, 100% 100%, 0 100%, 0 ${CUT})`;
 
@@ -15,12 +13,8 @@ function CampusFigure({ src, alt }: { src: string; alt: string }) {
       src={src}
       alt={alt}
       sizes="(min-width: 1536px) 34rem, (min-width: 1280px) 28rem, (min-width: 1024px) 22rem, 100vw"
-      // A shallow bleed: the photo is wide, and every percent of bleed is a
-      // percent of zoom on a picture that should stay a whole building.
       drift={6}
       className="aspect-video w-full lg:aspect-4/3"
-      // clip-path on the element that scrolls the picture, so the drift
-      // happens inside the shape rather than the shape drifting.
       style={{ clipPath: CHAMFER }}
     />
   );
@@ -62,9 +56,6 @@ export function EducationSection({ education }: { education: Tables<"education">
           {education.map((entry) => (
             <li
               key={entry.id}
-              // Picture on the left, copy on the right — the same shape as a
-              // project row, at a larger scale. The year rides above the
-              // degree as a kicker instead of holding a column of its own.
               className="grid grid-cols-1 gap-x-12 gap-y-8 border-b border-border py-8 first:pt-0 last:border-b-0 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-center xl:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] xl:gap-x-16 2xl:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]"
             >
               {entry.image_url ? (

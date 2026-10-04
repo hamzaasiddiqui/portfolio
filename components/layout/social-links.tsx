@@ -1,9 +1,13 @@
-import { LinkedinLogo } from "@phosphor-icons/react/dist/ssr/LinkedinLogo";
-import { GithubLogo } from "@phosphor-icons/react/dist/ssr/GithubLogo";
-import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr/EnvelopeSimple";
-import { Globe } from "@phosphor-icons/react/dist/ssr/Globe";
-import { Plus } from "@phosphor-icons/react/dist/ssr/Plus";
-import { ICON_BUTTON } from "@/components/layout/control-styles";
+"use client";
+
+import { useState, type FocusEvent } from "react";
+import { LinkedinLogo } from "@phosphor-icons/react/dist/csr/LinkedinLogo";
+import { GithubLogo } from "@phosphor-icons/react/dist/csr/GithubLogo";
+import { EnvelopeSimple } from "@phosphor-icons/react/dist/csr/EnvelopeSimple";
+import { Globe } from "@phosphor-icons/react/dist/csr/Globe";
+import { Plus } from "@phosphor-icons/react/dist/csr/Plus";
+import { cn } from "@/lib/utils";
+import { PlasmaLayer } from "@/components/plasma/plasma-layer";
 import type { Tables } from "@/lib/supabase/database.types";
 
 const ICONS: Record<string, typeof LinkedinLogo> = {
@@ -13,46 +17,64 @@ const ICONS: Record<string, typeof LinkedinLogo> = {
   globe: Globe,
 };
 
+const CONTROL =
+  "relative inline-flex size-9 shrink-0 items-center justify-center rounded-[18px] text-foreground transition-colors duration-200 ease-apple hover:text-accent";
+
 export function SocialLinks({ links }: { links: Tables<"social_links">[] }) {
+  const [open, setOpen] = useState(false);
+
   if (links.length === 0) return null;
 
+  function handleBlur(event: FocusEvent<HTMLDivElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+  }
+
   return (
-    // Hover/focus is pure CSS on this group, so the cluster stays a Server
-    // Component — no client bundle for what a `:hover` can do.
-    <div className="group/social relative size-8">
-      {/* Collapsed: a single glyph, rotating 45° into a close mark as the
-          column opens beneath it. It keeps pointer events while faded so the
-          hover target never disappears out from under the cursor. */}
+    <div
+      className="relative size-9"
+      onPointerEnter={() => setOpen(true)}
+      onPointerLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={handleBlur}
+    >
       <button
         type="button"
         aria-label="Social links"
-        className={`${ICON_BUTTON} absolute top-0 right-0 group-hover/social:rotate-45 group-hover/social:text-accent group-focus-within/social:rotate-45 group-focus-within/social:text-accent`}
+        aria-expanded={open}
+        className={cn(CONTROL, "absolute top-0 right-0", open && "text-accent")}
       >
-        <Plus size={16} aria-hidden="true" />
+        <PlasmaLayer radius={18} fuse={false} />
+        <Plus
+          size={16}
+          aria-hidden="true"
+          className={cn(
+            "relative transition-[rotate] duration-300 ease-apple",
+            open && "rotate-45"
+          )}
+        />
       </button>
 
-      {/* Expanded: the links drop straight down from the trigger, one under
-          the other, each a bare glyph — no panel, card or overlay behind
-          them. Absolutely placed, so opening shifts nothing on the page. */}
-      <div className="absolute top-9 right-0 flex flex-col items-center gap-1">
-        {links.map((link, index) => {
-          const Icon = ICONS[link.icon_name] ?? Globe;
-          const isMail = link.url.startsWith("mailto:");
+      <div className="absolute top-9 right-0 flex flex-col items-center gap-5 pt-5">
+        {open
+          ? links.map((link) => {
+              const Icon = ICONS[link.icon_name] ?? Globe;
+              const isMail = link.url.startsWith("mailto:");
 
-          return (
-            <a
-              key={link.id}
-              href={link.url}
-              target={isMail ? undefined : "_blank"}
-              rel={isMail ? undefined : "noopener noreferrer"}
-              aria-label={link.platform}
-              style={{ transitionDelay: `${index * 45}ms` }}
-              className={`${ICON_BUTTON} pointer-events-none -translate-y-2 opacity-0 transition-[color,transform,opacity] group-hover/social:pointer-events-auto group-hover/social:translate-y-0 group-hover/social:opacity-100 group-focus-within/social:pointer-events-auto group-focus-within/social:translate-y-0 group-focus-within/social:opacity-100`}
-            >
-              <Icon size={16} aria-hidden="true" />
-            </a>
-          );
-        })}
+              return (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target={isMail ? undefined : "_blank"}
+                  rel={isMail ? undefined : "noopener noreferrer"}
+                  aria-label={link.platform}
+                  className={CONTROL}
+                >
+                  <PlasmaLayer radius={18} fuse={false} />
+                  <Icon size={16} aria-hidden="true" className="relative" />
+                </a>
+              );
+            })
+          : null}
       </div>
     </div>
   );

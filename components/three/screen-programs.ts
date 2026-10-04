@@ -1,11 +1,5 @@
 import * as THREE from "three";
 
-/**
- * What the tube is showing. Structured content — chat, code, an eye — is
- * painted on a 2D canvas and uploaded as a texture; the shader then puts it
- * through the glass (scanlines, grain, bleed, curvature). Text in a fragment
- * shader would be a fight; text on a canvas is two lines.
- */
 export type Program = "static" | "eyes" | "code" | "terminal" | "signal";
 
 const WIDTH = 512;
@@ -77,11 +71,6 @@ export class ScreenPainter {
     this.texture.dispose();
   }
 
-  /**
-   * Repaints at ~18fps rather than every frame: at this size the cost is
-   * trivial, but a texture upload per frame is not, and a tube running a
-   * touch behind the display refresh is exactly the intended feel.
-   */
   paint(program: Program, time: number, blink: number) {
     if (time - this.lastPaint < 1 / 18) return;
     this.lastPaint = time;
@@ -113,7 +102,6 @@ export class ScreenPainter {
   private paintEyes(time: number, blink: number) {
     const ctx = this.context;
     const open = Math.max(1 - blink, 0.04);
-    // A slow, small wander — present, not predatory.
     const drift = Math.sin(time * 0.45) * 7;
 
     const draw = (cx: number, radius: number) => {
@@ -121,8 +109,6 @@ export class ScreenPainter {
       ctx.translate(cx, HEIGHT * 0.5);
       ctx.scale(1, open);
 
-      // Pure white, no pupil and no tint: a phosphor burning at full drive,
-      // falling off into nothing.
       const glow = ctx.createRadialGradient(0, 0, radius * 0.05, 0, 0, radius * 1.6);
       glow.addColorStop(0, "#ffffff");
       glow.addColorStop(0.46, "#ffffff");
@@ -145,8 +131,6 @@ export class ScreenPainter {
     ctx.font = MONO;
     ctx.textBaseline = "middle";
 
-    // Lines land one after another, then the log starts over — a machine
-    // getting on with its work, indifferent to being watched.
     const revealed = Math.min(TERMINAL.length, Math.floor((time % 14) / 1.1) + 1);
     const start = Math.max(0, revealed - 8);
     let y = 40;
@@ -191,8 +175,6 @@ export class ScreenPainter {
         continue;
       }
 
-      // Keywords in the accent, everything else in plain white — enough
-      // colour to read as code, not enough to read as a toy.
       let x = 62;
       for (const token of line.split(/(\s+)/)) {
         KEYWORDS.lastIndex = 0;

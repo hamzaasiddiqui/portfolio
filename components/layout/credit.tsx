@@ -1,8 +1,3 @@
-/**
- * The head scan is CC BY 3.0, which requires visible attribution. Set as a
- * corner micro-label so it reads as part of the layout's mono register rather
- * than as a disclaimer. Remove it only if the model is replaced.
- */
 export function ModelCredit() {
   return (
     <a

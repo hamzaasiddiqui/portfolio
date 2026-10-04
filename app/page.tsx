@@ -9,7 +9,6 @@ import { getSocialLinks } from "@/lib/queries/social-links";
 import { ActiveSectionProvider } from "@/components/active-section-provider";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Sidebar } from "@/components/layout/sidebar";
-import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SocialLinks } from "@/components/layout/social-links";
 import { SectionIndicator } from "@/components/layout/section-indicator";
 import { Copyright } from "@/components/layout/footer";
@@ -47,8 +46,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  // Every read is independent of the others — fire them together so they
-  // resolve in parallel instead of a request waterfall.
   const [profile, skills, processSteps, experiences, education, projects, socialLinks] =
     await Promise.all([
       getProfile(),
@@ -76,19 +73,10 @@ export default async function Home() {
     <ActiveSectionProvider items={navItems}>
       <IntroLoader name={profile.name} />
       <div className="relative min-h-full">
-        {/* Ticket 3: the figure lives in its own fixed layer pinned to
-            About's empty first column, so it persists across sections rather
-            than mounting and unmounting with the section. */}
         <FigureLayer />
 
-        <Sidebar name={profile.name} resumeUrl={profile.resume_url}>
-          <SidebarNav items={navItems} />
-        </Sidebar>
+        <Sidebar name={profile.name} resumeUrl={profile.resume_url} navItems={navItems} />
 
-        {/* z-overlay, not z-content: these fixed controls sit at the same
-            visual top edge as <main>'s sections, and an equal z-index would
-            fall back to DOM order and let whichever section is scrolled into
-            view swallow clicks and hover meant for them. */}
         <div
           className="pointer-events-none fixed inset-x-0 top-0 z-(--z-overlay) flex items-start justify-end gap-6 p-(--gutter)"
           style={{ paddingLeft: "calc(var(--sidebar-offset) + var(--gutter))" }}
@@ -96,7 +84,7 @@ export default async function Home() {
           <IntroReveal delay={0.5} className="pointer-events-auto hidden lg:block">
             <SectionIndicator />
           </IntroReveal>
-          <IntroReveal delay={0.6} className="pointer-events-auto">
+          <IntroReveal delay={0.6} className="pointer-events-auto hidden lg:block">
             <SocialLinks links={socialLinks} />
           </IntroReveal>
         </div>

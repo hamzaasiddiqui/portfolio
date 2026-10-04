@@ -10,11 +10,6 @@ export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // next-themes writes the real theme onto <html> from a pre-hydration
-  // script, but `resolvedTheme` is still undefined on the first client
-  // render. Rendering the same "unresolved" state on server and first paint,
-  // then flipping post-mount, is next-themes' documented fix for the
-  // hydration mismatch this would otherwise cause.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 

@@ -48,7 +48,6 @@ export function RichTextBlock({
 }: {
   text: string;
   className?: string;
-  /** Tag every paragraph for the scroll-reveal (components/motion/reveal-manager). */
   reveal?: boolean;
 }) {
   const paragraphs = text

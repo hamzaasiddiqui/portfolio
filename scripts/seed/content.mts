@@ -1,19 +1,3 @@
-/**
- * The entire public content of the site, in one file.
- *
- * This is the source of copy — not the migrations. Schema history describes
- * the *shape* of content; changing a sentence shouldn't append to it. Run
- * `pnpm seed` to make the database match this file.
- *
- * Conventions
- * - Prose fields support inline markdown links: `[label](https://example.com)`.
- *   The app renders those as new-tab anchors. Plain text passes through
- *   untouched, so there is no escaping burden on copy that has no links.
- * - `display_order` is explicit everywhere and globally sequential within a
- *   table, including across skill categories: categories render in the order
- *   their first member appears.
- * - `icon_slug` on a skill is a Simple Icons slug (https://simpleicons.org).
- */
 import type { TablesInsert } from "@/lib/supabase/database.types";
 
 const GIKI = "https://giki.edu.pk/";
@@ -40,13 +24,7 @@ export const SOCIAL_LINKS: TablesInsert<"social_links">[] = [
   { platform: "Email", url: "mailto:hamza.eins@gmail.com", icon_name: "envelope-simple", display_order: 2 },
 ];
 
-/**
- * Categories are emitted in the order their first member appears, so the
- * sequence of `display_order` below fixes both the group order and the order
- * inside each group. Keep it contiguous when editing.
- */
 export const SKILLS: TablesInsert<"skills">[] = [
-  // Languages
   { name: "JavaScript", category: "Languages", icon_slug: "javascript", display_order: 0 },
   { name: "TypeScript", category: "Languages", icon_slug: "typescript", display_order: 1 },
   { name: "C", category: "Languages", icon_slug: "c", display_order: 2 },
@@ -54,7 +32,6 @@ export const SKILLS: TablesInsert<"skills">[] = [
   { name: "Python", category: "Languages", icon_slug: "python", display_order: 4 },
   { name: "Go", category: "Languages", icon_slug: "go", display_order: 5 },
 
-  // Frameworks & Runtimes
   { name: "React", category: "Frameworks & Runtimes", icon_slug: "react", display_order: 6 },
   { name: "Next.js", category: "Frameworks & Runtimes", icon_slug: "nextdotjs", display_order: 7 },
   { name: "Angular", category: "Frameworks & Runtimes", icon_slug: "angular", display_order: 8 },
@@ -66,7 +43,6 @@ export const SKILLS: TablesInsert<"skills">[] = [
   { name: "React Native", category: "Frameworks & Runtimes", icon_slug: "react", display_order: 14 },
   { name: "Electron", category: "Frameworks & Runtimes", icon_slug: "electron", display_order: 15 },
 
-  // Data
   { name: "PostgreSQL", category: "Data", icon_slug: "postgresql", display_order: 16 },
   { name: "MySQL", category: "Data", icon_slug: "mysql", display_order: 17 },
   { name: "MongoDB", category: "Data", icon_slug: "mongodb", display_order: 18 },
@@ -74,17 +50,12 @@ export const SKILLS: TablesInsert<"skills">[] = [
   { name: "Firebase", category: "Data", icon_slug: "firebase", display_order: 20 },
   { name: "GraphQL", category: "Data", icon_slug: "graphql", display_order: 21 },
 
-  // Cloud & AI
-  // `amazonwebservices` and `openai` are not in Simple Icons (both brands
-  // withdrew permission). The slugs stay canonical and the app's icon map
-  // supplies those two marks locally — see lib/icons.
   { name: "AWS", category: "Cloud & AI", icon_slug: "amazonwebservices", display_order: 22 },
   { name: "Google Cloud", category: "Cloud & AI", icon_slug: "googlecloud", display_order: 23 },
   { name: "Vercel", category: "Cloud & AI", icon_slug: "vercel", display_order: 24 },
   { name: "OpenAI", category: "Cloud & AI", icon_slug: "openai", display_order: 25 },
   { name: "LangChain", category: "Cloud & AI", icon_slug: "langchain", display_order: 26 },
 
-  // Tooling & Infrastructure
   { name: "Git", category: "Tooling & Infrastructure", icon_slug: "git", display_order: 27 },
   { name: "GitHub Actions", category: "Tooling & Infrastructure", icon_slug: "githubactions", display_order: 28 },
   { name: "Docker", category: "Tooling & Infrastructure", icon_slug: "docker", display_order: 29 },
@@ -163,15 +134,6 @@ export const EDUCATION: TablesInsert<"education">[] = [
   },
 ];
 
-/**
- * `url` is null on every project: these are source-only, with no deployment to
- * point at. `image_url` points at a landing-page render under
- * public/images/projects — each one a mock of what the project's own site
- * would look like, since none of them has a deployment to screenshot.
- *
- * `tags` are deliberately empty rather than guessed; they render as the card's
- * tech strip and wrong stacks are worse than none.
- */
 export const PROJECTS: TablesInsert<"projects">[] = [
   {
     title: "NLP Powered Business Intelligence",

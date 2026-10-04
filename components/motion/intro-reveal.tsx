@@ -4,12 +4,6 @@ import type { ReactNode } from "react";
 import { motion } from "motion/react";
 import { useIntro } from "@/components/motion/intro-context";
 
-/**
- * Fades a piece of fixed chrome in once the intro curtain lifts. For the
- * corner controls, which are not part of the scroll-reveal flow because they
- * never scroll. Wrap the *content* of a fixed element, never the fixed
- * element itself — a transform on it would break its positioning.
- */
 export function IntroReveal({
   children,
   delay = 0,

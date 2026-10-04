@@ -109,6 +109,9 @@ importers:
 
   .:
     dependencies:
+      '@cruxgarden/plasma-ui':
+        specifier: ^0.7.0
+        version: 0.7.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@gsap/react':
         specifier: ^2.1.2
         version: 2.1.2(gsap@3.15.0)(react@19.2.8)
@@ -333,6 +336,13 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
+
+  '@cruxgarden/plasma-ui@0.7.0':
+    resolution: {integrity: sha512-POHUe0tfkP/knJQDzYTGVAOZNd1AQz3eURedkEK5QG4iNI4dqR6Pfkfgo5ovwsYDZ5uo6heJp8roKcNm+RQOow==}
+    engines: {node: '>=22.0.0'}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   '@dimforge/rapier3d-compat@0.12.0':
     resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
@@ -4345,6 +4355,11 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
+
+  '@cruxgarden/plasma-ui@0.7.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   '@dimforge/rapier3d-compat@0.12.0': {}
 

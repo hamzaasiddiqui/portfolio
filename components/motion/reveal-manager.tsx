@@ -8,15 +8,6 @@ import { useReducedMotion } from "@/lib/hooks/use-reduced-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * How an element arrives. Set with `data-reveal="<kind>"`; a bare
- * `data-reveal` means "up".
- *
- *   up    — rises a little and fades in (copy, labels, list items)
- *   fade  — opacity only (things that must not move, e.g. form fields)
- *   line  — a hairline drawing from left to right
- *   scale — settles down from slightly larger while fading (pictures)
- */
 export type RevealKind = "up" | "fade" | "line" | "scale";
 
 const FROM: Record<RevealKind, gsap.TweenVars> = {
@@ -38,15 +29,6 @@ function kindOf(element: HTMLElement): RevealKind {
   return value === "fade" || value === "line" || value === "scale" ? value : "up";
 }
 
-/**
- * Animates every `[data-reveal]` element on the page into view as it enters
- * the viewport, staggering whatever arrives together. Server components only
- * have to carry the attribute; the choreography lives here, once.
- *
- * Elements start hidden via CSS (see globals.css: `html.js [data-reveal]`),
- * so there is no flash of content before the first tween. Nothing starts
- * until the intro curtain lifts, so the hero animates in as it is uncovered.
- */
 export function RevealManager() {
   const { introDone } = useIntro();
   const reducedMotion = useReducedMotion();
@@ -71,8 +53,6 @@ export function RevealManager() {
         );
         if (fresh.length === 0) return;
 
-        // A batch is whatever entered together, so its stagger is scaled to
-        // its size: five items breathe, thirty items don't take three seconds.
         const each = Math.min(0.09, 1.2 / fresh.length);
         fresh.forEach((el, index) => {
           revealed.add(el);
@@ -80,16 +60,11 @@ export function RevealManager() {
           gsap.fromTo(el, FROM[kind], {
             ...TO[kind],
             delay: index * each,
-            // Leave no transform behind: a lingering matrix would turn the
-            // element into a containing block and a stacking context, which
-            // fixed/absolute children and hover transforms don't expect.
             onComplete: () => gsap.set(el, { clearProps: "transform" }),
           });
         });
       };
 
-      // Anything already scrolled past (a reload mid-page lands on the URL's
-      // hash) would never "enter" — show it as is.
       const above = elements.filter((el) => el.getBoundingClientRect().bottom < 0);
       above.forEach((el) => revealed.add(el));
       gsap.set(above, { opacity: 1 });

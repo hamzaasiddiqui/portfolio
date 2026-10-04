@@ -16,10 +16,6 @@ export function Section({
 }) {
   const ref = useRef<HTMLElement>(null);
 
-  // Overflow exemption: a section taller than the viewport (Projects,
-  // Experience — both driven by an unbounded row count) must not snap, or a
-  // long list traps the user mid-scroll. Measured, not hardcoded to named
-  // sections, and applied imperatively so server and client render alike.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -45,28 +41,17 @@ export function Section({
       )}
       style={{ scrollMarginTop: "var(--gutter)", scrollSnapAlign: "start" }}
     >
-      {/* Entrance animation is not wrapped here: each piece of content
-          carries a data-reveal attribute and components/motion/reveal-manager
-          animates them in as they scroll into view. */}
       <div className="w-full">{children}</div>
     </section>
   );
 }
 
-/**
- * Section label: small, mono, uppercase, over a hairline. The section's own
- * name is already set large and in the accent colour by the fixed indicator
- * in the top-right corner — repeating it in display type here would just be
- * the same word twice, so the big type in each section belongs to the
- * *content* instead.
- */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <div className="mb-12 w-full">
       <h2 data-reveal className="pb-4 font-label text-meta text-muted-foreground uppercase">
         {children}
       </h2>
-      {/* A real element rather than a border, so it can draw itself in. */}
       <span data-reveal="line" aria-hidden="true" className="block h-px w-full bg-border" />
     </div>
   );
